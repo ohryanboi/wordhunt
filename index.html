@@ -219,31 +219,22 @@
             background: #a0aec0;
         }
 
-        /* Tutorial System Styles */
+        /* Minimal Tutorial System */
         .tutorial-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.2); /* Much lighter overlay for interactive tutorials */
+            background: transparent;
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s ease;
-            pointer-events: none; /* Allow clicks through overlay */
+            pointer-events: none;
         }
 
-        .tutorial-overlay.interactive {
-            pointer-events: auto; /* Block clicks for modal-style tutorials */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.7); /* Darker overlay for modal tutorials */
-        }
-
-        .tutorial-overlay.interactive .tutorial-popup {
-            position: relative !important;
-            z-index: auto !important;
+        .tutorial-overlay.show {
+            opacity: 1;
         }
 
         .tutorial-overlay.show {
@@ -253,33 +244,44 @@
         .tutorial-popup {
             background: white;
             border-radius: 0.75rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 280px;
+            width: 280px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            pointer-events: auto;
             border: 2px solid #3b82f6;
-            max-width: 320px;
-            width: 90%;
-            max-height: 70vh;
-            overflow-y: auto;
-            transform: scale(0.9);
+            transform: translateX(100%);
             transition: transform 0.3s ease;
-            pointer-events: auto; /* Ensure popup can receive clicks */
         }
 
         .tutorial-overlay.show .tutorial-popup {
-            transform: scale(1);
+            transform: translateX(0);
         }
 
         .tutorial-header {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 0.75rem;
             text-align: center;
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-bottom: 1px solid #e5e7eb;
             position: relative;
+        }
+
+        .tutorial-header h3 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .tutorial-header p {
+            font-size: 0.75rem;
+            margin: 0.25rem 0 0 0;
         }
 
         .tutorial-close {
             position: absolute;
             top: 0.5rem;
-            right: 0.75rem;
+            right: 0.5rem;
             background: none;
             border: none;
             color: #6b7280;
@@ -290,76 +292,25 @@
         }
 
         .tutorial-close:hover {
-            background: rgba(0, 0, 0, 0.1);
+            background: #f3f4f6;
             color: #374151;
         }
 
         .tutorial-content {
-            padding: 1rem 1.25rem;
+            padding: 0.75rem;
+            font-size: 0.875rem;
         }
 
         .tutorial-footer {
-            padding: 0.75rem 1.25rem;
+            padding: 0.75rem;
             border-top: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f9fafb;
+            gap: 0.5rem;
         }
 
-        .tutorial-highlight {
-            position: absolute;
-            border: 3px solid #3b82f6;
-            border-radius: 0.5rem;
-            background: rgba(59, 130, 246, 0.1);
-            z-index: 999;
-            animation: tutorialPulse 2s infinite;
-            pointer-events: none;
-        }
 
-        @keyframes tutorialPulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-            }
-        }
-
-        .tutorial-arrow {
-            position: absolute;
-            width: 0;
-            height: 0;
-            z-index: 1001;
-        }
-
-        .tutorial-arrow.top {
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 10px solid white;
-            top: -10px;
-        }
-
-        .tutorial-arrow.bottom {
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid white;
-            bottom: -10px;
-        }
-
-        .tutorial-arrow.left {
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-right: 10px solid white;
-            left: -10px;
-        }
-
-        .tutorial-arrow.right {
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 10px solid white;
-            right: -10px;
-        }
 
         /* Tooltip Styles */
         .tooltip {
@@ -423,14 +374,15 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.25rem;
+            font-size: 0.75rem;
         }
 
         .tutorial-btn:hover {
@@ -592,20 +544,50 @@
 
         <!-- Leaderboard -->
         <div class="bg-white rounded-xl shadow-lg p-6 w-full mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">🏆 Leaderboard</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                🏆 <span class="ml-2">Leaderboard</span>
+            </h2>
 
-            <!-- Mode Tabs -->
-            <div class="flex mb-4 border-b border-gray-200">
-                <button id="leaderboard-timed-tab" class="flex-1 py-2 px-3 text-sm font-medium text-blue-600 border-b-2 border-blue-500">
-                    Timed Mode
-                </button>
-                <button id="leaderboard-unlimited-tab" class="flex-1 py-2 px-3 text-sm font-medium text-gray-500 hover:text-gray-700">
-                    Unlimited Mode
-                </button>
+            <!-- Tab Navigation -->
+            <div class="bg-gray-50 rounded-lg p-1 mb-6">
+                <!-- Leaderboard Type Tabs -->
+                <div class="grid grid-cols-3 gap-1 mb-2">
+                    <button id="leaderboard-local-tab" class="leaderboard-type-tab active py-3 px-4 text-sm font-semibold rounded-md transition-all duration-200 bg-blue-500 text-white">
+                        📍 Local
+                    </button>
+                    <button id="leaderboard-global-tab" class="leaderboard-type-tab py-3 px-4 text-sm font-semibold rounded-md transition-all duration-200 bg-white text-gray-600 hover:bg-gray-100">
+                        🌍 Global
+                    </button>
+                    <button id="leaderboard-friends-tab" class="leaderboard-type-tab py-3 px-4 text-sm font-semibold rounded-md transition-all duration-200 bg-white text-gray-600 hover:bg-gray-100">
+                        👥 Friends
+                    </button>
+                </div>
+
+                <!-- Mode Tabs -->
+                <div class="grid grid-cols-2 gap-1">
+                    <button id="leaderboard-timed-tab" class="leaderboard-mode-tab active py-2 px-4 text-xs font-medium rounded-md transition-all duration-200 bg-purple-500 text-white">
+                        ⏱️ Timed
+                    </button>
+                    <button id="leaderboard-unlimited-tab" class="leaderboard-mode-tab py-2 px-4 text-xs font-medium rounded-md transition-all duration-200 bg-white text-gray-600 hover:bg-gray-100">
+                        ♾️ Unlimited
+                    </button>
+                </div>
             </div>
 
-            <div id="opening-leaderboard" class="space-y-2">
-                <div class="text-center py-4 text-gray-500">Loading scores...</div>
+            <!-- Current Selection Display -->
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 mb-4 border border-blue-200">
+                <div class="text-center">
+                    <span class="text-sm font-medium text-gray-600">Viewing:</span>
+                    <span id="current-leaderboard-display" class="ml-2 font-bold text-blue-700">📍 Local • ⏱️ Timed Mode</span>
+                </div>
+            </div>
+
+            <!-- Leaderboard Content -->
+            <div id="opening-leaderboard" class="space-y-4">
+                <div class="text-center py-8 text-gray-500">
+                    <div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <div>Loading scores...</div>
+                </div>
             </div>
         </div>
 
@@ -630,6 +612,13 @@
             </button>
         </div>
 
+        <!-- Social Features -->
+        <div class="w-full mb-4">
+            <button id="opening-social-btn" class="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all text-lg font-medium transform hover:scale-105">
+                👥 Social & Multiplayer
+            </button>
+        </div>
+
         <!-- Tutorial Button -->
         <div class="w-full mb-4">
             <button id="opening-tutorial-btn" class="w-full py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all text-lg font-medium transform hover:scale-105">
@@ -642,6 +631,36 @@
             <button id="opening-daily-challenge-btn" class="w-full py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all text-lg font-medium transform hover:scale-105">
                 📅 Daily Challenge
             </button>
+        </div>
+
+        <!-- User Account Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">👤 Account</h2>
+
+            <!-- Signed Out State -->
+            <div id="auth-signed-out" class="space-y-4">
+                <p class="text-sm text-gray-600 text-center">Sign in to sync your progress across devices!</p>
+                <div class="space-y-3">
+                    <button id="show-sign-in-btn" class="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all text-sm font-medium">
+                        🔑 Sign In
+                    </button>
+                    <button id="show-sign-up-btn" class="w-full py-2 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all text-sm font-medium">
+                        📝 Create Account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signed In State -->
+            <div id="auth-signed-in" class="space-y-4 hidden">
+                <div class="text-center">
+                    <div class="text-sm text-gray-600">Signed in as:</div>
+                    <div id="user-email" class="font-medium text-gray-800"></div>
+                    <div class="text-xs text-green-600 mt-1">✅ Progress synced to cloud</div>
+                </div>
+                <button id="sign-out-btn" class="w-full py-2 px-4 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all text-sm font-medium">
+                    🚪 Sign Out
+                </button>
+            </div>
         </div>
 
         <!-- Data Reset Button -->
@@ -804,6 +823,174 @@
                     <div id="possible-words-list" class="grid grid-cols-2 gap-2 text-left"></div>
                     <p id="possible-words-count" class="mt-2 text-sm text-gray-500"></p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-sm w-full mx-4 transform scale-95 opacity-0 transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 id="auth-modal-title" class="text-2xl font-bold text-gray-800 mb-2">🔑 Sign In</h2>
+                <p id="auth-modal-subtitle" class="text-gray-600">Sign in to sync your progress</p>
+            </div>
+
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="auth-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="auth-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
+                </div>
+
+                <div id="auth-error" class="text-red-600 text-sm hidden"></div>
+
+                <div class="space-y-3">
+                    <button type="submit" id="auth-submit-btn" class="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all font-medium">
+                        Sign In
+                    </button>
+                    <button type="button" id="auth-toggle-btn" class="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all text-sm">
+                        Need an account? Sign up
+                    </button>
+                    <button type="button" id="auth-cancel-btn" class="w-full py-2 px-4 text-gray-500 hover:text-gray-700 transition-all text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Social Features Modal -->
+    <div id="social-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 transform scale-95 opacity-0 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-pink-600 mb-2">👥 Social & Multiplayer</h2>
+                <p class="text-gray-600">Connect, compete, and challenge friends!</p>
+            </div>
+
+            <!-- User Status -->
+            <div id="social-user-status" class="mb-6 p-4 rounded-lg border">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Social Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <!-- Global Leaderboards -->
+                <button id="global-leaderboards-btn" class="p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 hover:from-blue-100 hover:to-blue-200 transition-all text-left">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">🌍</span>
+                        <h3 class="font-bold text-blue-700">Global Leaderboards</h3>
+                    </div>
+                    <p class="text-sm text-blue-600">Compete with players worldwide</p>
+                </button>
+
+                <!-- Friends System -->
+                <button id="friends-system-btn" class="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200 hover:from-green-100 hover:to-green-200 transition-all text-left">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">👫</span>
+                        <h3 class="font-bold text-green-700">Friends</h3>
+                    </div>
+                    <p class="text-sm text-green-600">Add friends and compare scores</p>
+                </button>
+
+                <!-- Real-time Multiplayer -->
+                <button id="multiplayer-btn" class="p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200 hover:from-purple-100 hover:to-purple-200 transition-all text-left">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">⚡</span>
+                        <h3 class="font-bold text-purple-700">Live Multiplayer</h3>
+                    </div>
+                    <p class="text-sm text-purple-600">Real-time head-to-head battles</p>
+                </button>
+
+                <!-- Share & Challenge -->
+                <button id="share-challenge-btn" class="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200 hover:from-orange-100 hover:to-orange-200 transition-all text-left">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">🎯</span>
+                        <h3 class="font-bold text-orange-700">Challenges</h3>
+                    </div>
+                    <p class="text-sm text-orange-600">Send custom challenges to friends</p>
+                </button>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="space-y-3 mb-6">
+                <button id="quick-match-btn" class="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all font-medium">
+                    🚀 Quick Match (Find Random Opponent)
+                </button>
+                <button id="create-room-btn" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all font-medium">
+                    🏠 Create Private Room
+                </button>
+                <button id="join-room-btn" class="w-full py-3 px-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg hover:from-teal-600 hover:to-cyan-600 transition-all font-medium">
+                    🔗 Join Room (Enter Code)
+                </button>
+            </div>
+
+            <div class="flex justify-center">
+                <button id="close-social-modal" class="py-2 px-6 text-gray-500 hover:text-gray-700 transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multiplayer Game Room Modal -->
+    <div id="multiplayer-room-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 transform scale-95 opacity-0 transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 id="room-modal-title" class="text-2xl font-bold text-purple-600 mb-2">🏠 Game Room</h2>
+                <p id="room-modal-subtitle" class="text-gray-600">Waiting for players...</p>
+            </div>
+
+            <!-- Room Info -->
+            <div id="room-info" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div class="text-center">
+                    <div class="text-sm text-gray-600">Room Code</div>
+                    <div id="room-code" class="text-2xl font-bold text-purple-600 font-mono">ABCD</div>
+                    <button id="copy-room-code" class="text-xs text-blue-600 hover:text-blue-800 mt-1">📋 Copy Code</button>
+                </div>
+            </div>
+
+            <!-- Players List -->
+            <div id="room-players" class="mb-6">
+                <h3 class="font-bold text-gray-700 mb-3">Players (1/2)</h3>
+                <div id="players-list" class="space-y-2">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game Settings -->
+            <div id="room-settings" class="mb-6">
+                <h3 class="font-bold text-gray-700 mb-3">Game Settings</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Board Size</label>
+                        <select id="room-board-size" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="4">4×4 Grid</option>
+                            <option value="5">5×5 Grid</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Game Duration</label>
+                        <select id="room-duration" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="60">1 minute</option>
+                            <option value="90">1.5 minutes</option>
+                            <option value="120">2 minutes</option>
+                            <option value="180">3 minutes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Actions -->
+            <div class="space-y-3">
+                <button id="start-multiplayer-game" class="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                    🚀 Start Game
+                </button>
+                <button id="leave-room-btn" class="w-full py-2 px-4 text-gray-500 hover:text-gray-700 transition-all">
+                    Leave Room
+                </button>
             </div>
         </div>
     </div>
@@ -1743,6 +1930,11 @@
                 const key = getHighScoreKey(currentGameMode, currentBoardSize);
                 localStorage.setItem(key, JSON.stringify(highScores));
                 console.log(`Saved ${currentGameMode} ${currentBoardSize}x${currentBoardSize} high scores:`, highScores);
+
+                // Also sync to cloud if user is signed in
+                if (currentUser && typeof syncGameDataToCloud === 'function') {
+                    syncGameDataToCloud();
+                }
             } catch (error) {
                 console.error("Error saving high scores:", error);
             }
@@ -1940,23 +2132,50 @@
             }
         }
 
+        // New leaderboard state management
+        let currentLeaderboardState = {
+            type: 'local', // 'local', 'global', 'friends'
+            mode: 'timed'  // 'timed', 'unlimited'
+        };
+
         function displayOpeningLeaderboard() {
             const leaderboardEl = document.getElementById('opening-leaderboard');
+            const displayEl = document.getElementById('current-leaderboard-display');
 
-            // Determine current mode from active tab
-            let currentMode = GAME_MODE.TIMED; // Default
-            if (document.getElementById('leaderboard-timed-tab').classList.contains('text-blue-600')) {
-                currentMode = GAME_MODE.TIMED;
-            } else if (document.getElementById('leaderboard-unlimited-tab').classList.contains('text-blue-600')) {
-                currentMode = GAME_MODE.UNLIMITED;
+            // Update display text
+            const typeIcons = { local: '📍', global: '🌍', friends: '👥' };
+            const modeIcons = { timed: '⏱️', unlimited: '♾️' };
+            const typeNames = { local: 'Local', global: 'Global', friends: 'Friends' };
+            const modeNames = { timed: 'Timed Mode', unlimited: 'Unlimited Mode' };
+
+            if (displayEl) {
+                displayEl.textContent = `${typeIcons[currentLeaderboardState.type]} ${typeNames[currentLeaderboardState.type]} • ${modeIcons[currentLeaderboardState.mode]} ${modeNames[currentLeaderboardState.mode]}`;
             }
 
+            // Clear content
             leaderboardEl.innerHTML = '';
 
-            // For Timed and Unlimited modes, show both board sizes
-            const boardSizes = [BOARD_SIZE.SMALL, BOARD_SIZE.LARGE];
+            // Load appropriate leaderboard immediately
+            const gameMode = currentLeaderboardState.mode === 'timed' ? GAME_MODE.TIMED : GAME_MODE.UNLIMITED;
 
-            boardSizes.forEach(boardSize => {
+            console.log('displayOpeningLeaderboard - about to call function for type:', currentLeaderboardState.type);
+            if (currentLeaderboardState.type === 'global') {
+                console.log('Calling displayGlobalLeaderboard');
+                displayGlobalLeaderboard(leaderboardEl, gameMode);
+            } else if (currentLeaderboardState.type === 'friends') {
+                console.log('Calling displayFriendsLeaderboard');
+                displayFriendsLeaderboard(leaderboardEl, gameMode);
+            } else {
+                console.log('Calling displayLocalLeaderboard');
+                displayLocalLeaderboard(leaderboardEl, gameMode);
+            }
+        }
+
+        function displayLocalLeaderboard(leaderboardEl, currentMode) {
+            const boardSizes = [BOARD_SIZE.SMALL, BOARD_SIZE.LARGE];
+            leaderboardEl.innerHTML = '';
+
+            boardSizes.forEach((boardSize, index) => {
                 const key = getHighScoreKey(currentMode, boardSize);
                 let scores = [];
                 try {
@@ -1968,49 +2187,162 @@
                     console.error("Error loading scores:", error);
                 }
 
-                // Create section for this board size
-                const sectionTitle = document.createElement('div');
-                sectionTitle.className = 'flex items-center justify-between mb-2 mt-4 first:mt-0';
+                // Create modern card for this board size
+                const card = document.createElement('div');
+                card.className = `bg-gradient-to-r ${boardSize === 4 ? 'from-purple-50 to-purple-100 border-purple-200' : 'from-orange-50 to-orange-100 border-orange-200'} rounded-xl p-4 border-2`;
 
-                const titleText = document.createElement('span');
-                titleText.className = 'text-sm font-semibold text-gray-700';
-                titleText.textContent = `${boardSize}×${boardSize} Grid`;
-
-                const badge = document.createElement('span');
-                badge.className = `text-xs font-bold px-2 py-1 rounded-full text-white ${boardSize === 4 ? 'bg-purple-500' : 'bg-orange-500'}`;
-                badge.textContent = boardSize === 4 ? 'CLASSIC' : 'CHALLENGE';
-
-                sectionTitle.appendChild(titleText);
-                sectionTitle.appendChild(badge);
-                leaderboardEl.appendChild(sectionTitle);
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between mb-3';
+                header.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-bold ${boardSize === 4 ? 'text-purple-700' : 'text-orange-700'}">${boardSize}×${boardSize} Grid</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full text-white ${boardSize === 4 ? 'bg-purple-500' : 'bg-orange-500'}">
+                            ${boardSize === 4 ? 'CLASSIC' : 'CHALLENGE'}
+                        </span>
+                    </div>
+                    <div class="text-xs ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'} font-medium">
+                        ${scores.length} score${scores.length !== 1 ? 's' : ''}
+                    </div>
+                `;
+                card.appendChild(header);
 
                 if (scores.length === 0) {
-                    const noScores = document.createElement('div');
-                    noScores.className = 'text-center py-2 text-gray-500 text-sm';
-                    noScores.textContent = 'No scores yet';
-                    leaderboardEl.appendChild(noScores);
-                    return;
+                    const emptyState = document.createElement('div');
+                    emptyState.className = `text-center py-6 ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'}`;
+                    emptyState.innerHTML = `
+                        <div class="text-3xl mb-2">🎯</div>
+                        <div class="font-medium">No scores yet</div>
+                        <div class="text-xs opacity-75 mt-1">Play a game to see your scores here!</div>
+                    `;
+                    card.appendChild(emptyState);
+                } else {
+                    const scoresContainer = document.createElement('div');
+                    scoresContainer.className = 'space-y-2';
+
+                    scores.slice(0, 3).forEach((scoreData, scoreIndex) => {
+                        const scoreRow = document.createElement('div');
+                        scoreRow.className = 'flex justify-between items-center py-3 px-4 bg-white rounded-lg shadow-sm border';
+
+                        let rankDisplay = `${scoreIndex + 1}`;
+                        let rankIcon = '';
+                        if (scoreIndex === 0) { rankIcon = '🥇'; rankDisplay = ''; }
+                        else if (scoreIndex === 1) { rankIcon = '🥈'; rankDisplay = ''; }
+                        else if (scoreIndex === 2) { rankIcon = '🥉'; rankDisplay = ''; }
+
+                        const scoreDate = new Date(scoreData.date);
+                        const dateStr = scoreDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+                        scoreRow.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-bold ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'}">${rankIcon}${rankDisplay}</span>
+                                <div>
+                                    <div class="font-semibold text-gray-800">${scoreData.score} points</div>
+                                    <div class="text-xs text-gray-500">${scoreData.words} words • ${dateStr}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'} font-medium">
+                                    ${Math.round(scoreData.score / scoreData.words)} avg
+                                </div>
+                            </div>
+                        `;
+
+                        scoresContainer.appendChild(scoreRow);
+                    });
+
+                    card.appendChild(scoresContainer);
+
+                    // Add "View All" button if there are more scores
+                    if (scores.length > 3) {
+                        const viewAllBtn = document.createElement('button');
+                        viewAllBtn.className = `w-full mt-3 py-2 text-xs font-medium ${boardSize === 4 ? 'text-purple-600 hover:text-purple-700' : 'text-orange-600 hover:text-orange-700'} transition-colors`;
+                        viewAllBtn.textContent = `View all ${scores.length} scores →`;
+                        card.appendChild(viewAllBtn);
+                    }
                 }
 
-                scores.slice(0, 3).forEach((scoreData, index) => {
-                    const scoreRow = document.createElement('div');
-                    scoreRow.className = 'flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg mb-1';
+                leaderboardEl.appendChild(card);
+            });
+        }
 
-                    let rankDisplay = `${index + 1}.`;
-                    if (index === 0) rankDisplay = '🥇';
-                    else if (index === 1) rankDisplay = '🥈';
-                    else if (index === 2) rankDisplay = '🥉';
+        async function displayGlobalLeaderboard(leaderboardEl, currentMode) {
+            console.log('displayGlobalLeaderboard called', { leaderboardEl, currentMode });
+            console.log('leaderboardEl exists:', !!leaderboardEl);
+            const boardSizes = [4, 5];
+            leaderboardEl.innerHTML = '';
 
-                    const scoreDate = new Date(scoreData.date);
-                    const dateStr = scoreDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            console.log('About to create cards for boardSizes:', boardSizes);
+            // Always show the "No scores yet" cards for now (simplified approach)
+            boardSizes.forEach(boardSize => {
+                const card = document.createElement('div');
+                card.className = `bg-gradient-to-r ${boardSize === 4 ? 'from-purple-50 to-purple-100 border-purple-200' : 'from-orange-50 to-orange-100 border-orange-200'} rounded-xl p-4 border-2`;
 
-                    scoreRow.innerHTML = `
-                        <span class="font-medium text-sm">${rankDisplay} <span class="text-gray-600 text-xs">${dateStr}</span></span>
-                        <span class="font-bold text-blue-600 text-sm">${scoreData.score} <span class="text-xs font-normal text-gray-500">(${scoreData.words}w)</span></span>
-                    `;
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between mb-3';
+                header.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-bold ${boardSize === 4 ? 'text-purple-700' : 'text-orange-700'}">${boardSize}×${boardSize} Grid</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full text-white ${boardSize === 4 ? 'bg-purple-500' : 'bg-orange-500'}">
+                            ${boardSize === 4 ? 'CLASSIC' : 'CHALLENGE'}
+                        </span>
+                    </div>
+                    <div class="text-xs ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'} font-medium">
+                        🌍 Global • 0 scores
+                    </div>
+                `;
+                card.appendChild(header);
 
-                    leaderboardEl.appendChild(scoreRow);
-                });
+                const emptyState = document.createElement('div');
+                emptyState.className = `text-center py-6 ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'}`;
+                emptyState.innerHTML = `
+                    <div class="text-3xl mb-2">🎯</div>
+                    <div class="font-medium">No scores yet</div>
+                    <div class="text-xs opacity-75 mt-1">Play a game to see your scores here!</div>
+                `;
+                card.appendChild(emptyState);
+
+                leaderboardEl.appendChild(card);
+                console.log('Added card for boardSize:', boardSize);
+            });
+            console.log('displayGlobalLeaderboard completed, total cards added:', boardSizes.length);
+            return;
+        }
+
+        async function displayFriendsLeaderboard(leaderboardEl, currentMode) {
+            const boardSizes = [4, 5];
+            leaderboardEl.innerHTML = '';
+
+            boardSizes.forEach(boardSize => {
+                const card = document.createElement('div');
+                card.className = `bg-gradient-to-r ${boardSize === 4 ? 'from-purple-50 to-purple-100 border-purple-200' : 'from-orange-50 to-orange-100 border-orange-200'} rounded-xl p-4 border-2`;
+
+                const header = document.createElement('div');
+                header.className = 'flex items-center justify-between mb-3';
+                header.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-bold ${boardSize === 4 ? 'text-purple-700' : 'text-orange-700'}">${boardSize}×${boardSize} Grid</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded-full text-white ${boardSize === 4 ? 'bg-purple-500' : 'bg-orange-500'}">
+                            ${boardSize === 4 ? 'CLASSIC' : 'CHALLENGE'}
+                        </span>
+                    </div>
+                    <div class="text-xs ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'} font-medium">
+                        👥 Friends
+                    </div>
+                `;
+                card.appendChild(header);
+
+                const emptyState = document.createElement('div');
+                emptyState.className = `text-center py-6 ${boardSize === 4 ? 'text-purple-600' : 'text-orange-600'}`;
+
+                // Always show the same "No scores yet" message regardless of sign-in status
+                emptyState.innerHTML = `
+                    <div class="text-3xl mb-2">🎯</div>
+                    <div class="font-medium">No scores yet</div>
+                    <div class="text-xs opacity-75 mt-1">Play a game to see your scores here!</div>
+                `;
+
+                card.appendChild(emptyState);
+                leaderboardEl.appendChild(card);
             });
         }
 
@@ -2285,7 +2617,20 @@
             
             // Update high scores
             updateHighScores();
-            
+
+            // Submit score to global leaderboard if user is signed in
+            if (currentUser && window.submitScoreToGlobalLeaderboard && !secretCommandsUsed) {
+                const gameMode = currentGameMode === GAME_MODE.TIMED ? 'timed' : 'unlimited';
+                window.submitScoreToGlobalLeaderboard(gameMode, GRID_SIZE, score, foundWords.size, gameDuration)
+                    .then(result => {
+                        if (result.success) {
+                            console.log('Score submitted to global leaderboard');
+                        } else {
+                            console.error('Failed to submit score:', result.error);
+                        }
+                    });
+            }
+
             // Reset the all possible words section
             const allPossibleWordsSection = document.getElementById('all-possible-words');
             if (allPossibleWordsSection) {
@@ -3248,33 +3593,73 @@
                 });
             }
 
-            // Leaderboard tabs
-            const timedTab = document.getElementById('leaderboard-timed-tab');
-            const unlimitedTab = document.getElementById('leaderboard-unlimited-tab');
+            // Setup new leaderboard tab system
+            setupLeaderboardTabs();
 
-            if (timedTab && unlimitedTab) {
-                timedTab.addEventListener('click', () => {
-                    // Update tab styling
-                    timedTab.classList.remove('text-gray-500', 'hover:text-gray-700');
-                    timedTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-500');
-                    unlimitedTab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-500');
-                    unlimitedTab.classList.add('text-gray-500', 'hover:text-gray-700');
 
-                    // Update leaderboard
-                    displayOpeningLeaderboard();
-                });
+        }
 
-                unlimitedTab.addEventListener('click', () => {
-                    // Update tab styling
-                    unlimitedTab.classList.remove('text-gray-500', 'hover:text-gray-700');
-                    unlimitedTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-500');
-                    timedTab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-500');
-                    timedTab.classList.add('text-gray-500', 'hover:text-gray-700');
+        function setupLeaderboardTabs() {
+            // Get all tab elements
+            const typeTabs = {
+                local: document.getElementById('leaderboard-local-tab'),
+                global: document.getElementById('leaderboard-global-tab'),
+                friends: document.getElementById('leaderboard-friends-tab')
+            };
 
-                    // Update leaderboard
-                    displayOpeningLeaderboard();
-                });
-            }
+            const modeTabs = {
+                timed: document.getElementById('leaderboard-timed-tab'),
+                unlimited: document.getElementById('leaderboard-unlimited-tab')
+            };
+
+            // Set initial active states
+            setActiveTab(typeTabs, 'local');
+            setActiveTab(modeTabs, 'timed');
+
+            // Add event listeners for type tabs
+            Object.entries(typeTabs).forEach(([type, tab]) => {
+                if (tab) {
+                    tab.addEventListener('click', () => {
+                        currentLeaderboardState.type = type;
+                        setActiveTab(typeTabs, type);
+                        displayOpeningLeaderboard();
+                    });
+                }
+            });
+
+            // Add event listeners for mode tabs
+            Object.entries(modeTabs).forEach(([mode, tab]) => {
+                if (tab) {
+                    tab.addEventListener('click', () => {
+                        currentLeaderboardState.mode = mode;
+                        setActiveTab(modeTabs, mode);
+                        displayOpeningLeaderboard();
+                    });
+                }
+            });
+        }
+
+        function setActiveTab(tabs, activeKey) {
+            Object.entries(tabs).forEach(([key, tab]) => {
+                if (tab) {
+                    if (key === activeKey) {
+                        // Active state
+                        tab.classList.remove('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                        if (tab.classList.contains('leaderboard-type-tab')) {
+                            // Type tab
+                            tab.classList.add('bg-blue-500', 'text-white');
+                        } else {
+                            // Mode tab
+                            tab.classList.add('bg-purple-500', 'text-white');
+                        }
+                        tab.classList.add('active');
+                    } else {
+                        // Inactive state
+                        tab.classList.remove('bg-blue-500', 'bg-purple-500', 'text-white', 'active');
+                        tab.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                    }
+                }
+            });
         }
 
         // Set the game mode
@@ -6206,6 +6591,11 @@
                         totalWordsFound,
                         customizeEffectsUsed: Array.from(customizeEffectsUsed)
                     }));
+
+                    // Also sync to cloud if user is signed in
+                    if (currentUser && typeof syncGameDataToCloud === 'function') {
+                        syncGameDataToCloud();
+                    }
                 } catch (error) {
                     console.warn('Failed to save achievements:', error);
                 }
@@ -6907,23 +7297,9 @@
             // Create tutorial popup
             const popup = document.createElement('div');
             popup.className = 'tutorial-popup';
-            popup.style.position = 'fixed';
-            popup.style.zIndex = '1001';
 
-            // Add content based on step type
-            if (step.action === 'highlight') {
-                createHighlightTutorial(step, popup, overlay);
-            } else if (step.action === 'demo') {
-                createDemoTutorial(step, popup, overlay);
-            } else if (step.action === 'guided_practice') {
-                createGuidedPracticeTutorial(step, popup, overlay);
-            } else if (step.action === 'free_practice') {
-                createFreePracticeTutorial(step, popup, overlay);
-            } else if (step.action === 'completion') {
-                createCompletionTutorial(step, popup, overlay);
-            } else {
-                createCenterTutorial(step, popup, overlay);
-            }
+            // All tutorials use the same simple centered layout
+            createSimpleTutorial(step, popup, overlay);
 
             overlay.appendChild(popup);
             document.body.appendChild(overlay);
@@ -6936,224 +7312,120 @@
             saveTutorialData();
         }
 
-        function createCenterTutorial(step, popup, overlay) {
-            // Center tutorials should block interaction
-            overlay.classList.add('interactive');
+        function createSimpleTutorial(step, popup, overlay) {
+            // Create simple content based on step type
+            let content = '';
+            let buttons = '';
 
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-xl font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-sm text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700">${step.content}</p>
-                    <div class="tutorial-progress">
+            if (step.action === 'demo') {
+                content = `
+                    <p class="text-gray-700 mb-4">${step.content}</p>
+                    <div class="bg-blue-50 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-blue-700">👀 Watch: I'll highlight "${step.demoWord}" for you!</p>
+                    </div>
+                `;
+                buttons = `
+                    <button class="tutorial-btn secondary" onclick="skipTutorialStep()">Skip Demo</button>
+                    <button class="tutorial-btn" onclick="startTutorialDemo('${step.id}')">Show Me!</button>
+                `;
+            } else if (step.action === 'guided_practice') {
+                content = `
+                    <p class="text-gray-700 mb-4">${step.content}</p>
+                    <div class="bg-green-50 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-green-700">🎯 Goal: Find "${step.targetWord}" by connecting letters!</p>
+                    </div>
+                `;
+                buttons = `
+                    <button class="tutorial-btn secondary" onclick="showTutorialHint('${step.id}')">Need Help?</button>
+                    <div class="text-sm text-gray-500">Try it on the board!</div>
+                `;
+
+                // Set up guided practice
+                window.tutorialGuidedPractice = {
+                    targetWord: step.targetWord,
+                    targetPath: step.targetPath,
+                    stepId: step.id
+                };
+            } else if (step.action === 'free_practice') {
+                content = `
+                    <p class="text-gray-700 mb-4">${step.content}</p>
+                    <div class="bg-yellow-50 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-yellow-700">📝 Progress: <span id="tutorial-words-found">0</span> / ${step.wordsNeeded} words found</p>
+                    </div>
+                    <p class="text-sm text-gray-600">💡 Try: DOG, MAN, ORE, CODE, MANY</p>
+                `;
+                buttons = `
+                    <button class="tutorial-btn secondary" onclick="skipTutorialStep()">Skip Practice</button>
+                    <div class="text-sm text-gray-500">Find words on the board!</div>
+                `;
+
+                // Set up free practice
+                window.tutorialFreePractice = {
+                    wordsNeeded: step.wordsNeeded,
+                    wordsFound: 0,
+                    startingWords: foundWords.size
+                };
+            } else if (step.action === 'completion') {
+                content = `
+                    <p class="text-gray-700 mb-4">${step.content}</p>
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
+                        <h4 class="font-medium text-gray-800 mb-2">🎯 What's Next?</h4>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Choose your preferred game mode</li>
+                            <li>• Try both 4×4 and 5×5 board sizes</li>
+                            <li>• Unlock achievements as you play</li>
+                            <li>• Check out strategy guides for advanced tips</li>
+                        </ul>
+                    </div>
+                `;
+                buttons = `
+                    <button class="tutorial-btn secondary" onclick="openTutorialMenu(); completeTutorial();">View Guides</button>
+                    <button class="tutorial-btn" onclick="completeTutorialAndStartGame()">Start Playing!</button>
+                `;
+            } else {
+                // Default tutorial step
+                content = `
+                    <p class="text-gray-700 mb-4">${step.content}</p>
+                    <div class="tutorial-progress mb-4">
                         <div class="tutorial-progress-bar" style="width: ${((tutorialData.currentStep + 1) / TUTORIAL_STEPS.length) * 100}%"></div>
                     </div>
                     <div class="text-xs text-gray-500 text-center">
                         Step ${tutorialData.currentStep + 1} of ${TUTORIAL_STEPS.length}
                     </div>
-                </div>
-                <div class="tutorial-footer">
+                `;
+                buttons = `
                     ${tutorialData.currentStep > 0 ? '<button class="tutorial-btn secondary" onclick="previousTutorialStep()">← Previous</button>' : '<div></div>'}
                     <button class="tutorial-btn" onclick="nextTutorialStep()">
                         ${tutorialData.currentStep === TUTORIAL_STEPS.length - 1 ? 'Finish' : 'Next →'}
                     </button>
-                </div>
-            `;
-        }
-
-        function createHighlightTutorial(step, popup, overlay) {
-            // Highlight tutorials should allow board interaction
-            // Don't add 'interactive' class to overlay
-
-            // Position popup relative to target
-            const target = step.target ? document.querySelector(step.target) : null;
-
-            if (target) {
-                // Create highlight element
-                const highlight = document.createElement('div');
-                highlight.className = 'tutorial-highlight';
-                highlight.id = 'tutorial-highlight';
-
-                // Position highlight over target
-                const rect = target.getBoundingClientRect();
-                highlight.style.left = (rect.left - 5) + 'px';
-                highlight.style.top = (rect.top - 5) + 'px';
-                highlight.style.width = (rect.width + 10) + 'px';
-                highlight.style.height = (rect.height + 10) + 'px';
-
-                document.body.appendChild(highlight);
-
-                // Position popup
-                positionTutorialPopup(popup, target, step.position);
+                `;
             }
 
             popup.innerHTML = `
                 <div class="tutorial-header">
                     <button class="tutorial-close" onclick="closeTutorialModal()" title="Close tutorial">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
                     </button>
-                    <h3 class="text-base font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-xs text-gray-600 mt-1">${step.description}</p>
+                    <h3>${step.title}</h3>
+                    <p>${step.description}</p>
                 </div>
                 <div class="tutorial-content">
-                    <p class="text-gray-700 text-sm">${step.content}</p>
+                    ${content}
                 </div>
                 <div class="tutorial-footer">
-                    ${tutorialData.currentStep > 0 ? '<button class="tutorial-btn secondary text-xs py-1 px-2" onclick="previousTutorialStep()">← Back</button>' : '<div></div>'}
-                    <button class="tutorial-btn text-xs py-1 px-3" onclick="nextTutorialStep()">
-                        Got it!
-                    </button>
+                    ${buttons}
                 </div>
             `;
         }
 
-        function createInteractiveTutorial(step, popup, overlay) {
-            // For interactive steps, we wait for user action
-            const target = step.target ? document.querySelector(step.target) : null;
 
-            if (target) {
-                const highlight = document.createElement('div');
-                highlight.className = 'tutorial-highlight';
-                highlight.id = 'tutorial-highlight';
 
-                const rect = target.getBoundingClientRect();
-                highlight.style.left = (rect.left - 5) + 'px';
-                highlight.style.top = (rect.top - 5) + 'px';
-                highlight.style.width = (rect.width + 10) + 'px';
-                highlight.style.height = (rect.height + 10) + 'px';
 
-                document.body.appendChild(highlight);
-                positionTutorialPopup(popup, target, step.position);
-            }
 
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-lg font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-sm text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700 text-sm">${step.content}</p>
-                    <div class="mt-3 p-3 bg-blue-50 rounded-lg">
-                        <p class="text-xs text-blue-700">💡 <strong>Tip:</strong> We'll automatically continue when you find your first word!</p>
-                    </div>
-                </div>
-                <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary" onclick="skipTutorialStep()">Skip this step</button>
-                    <div class="text-xs text-gray-500">Waiting for action...</div>
-                </div>
-            `;
 
-            // Set up listener for word found
-            if (step.id === 'first_word') {
-                window.tutorialWordListener = function() {
-                    setTimeout(() => {
-                        nextTutorialStep();
-                    }, 1000); // Small delay to let user see the word was found
-                };
-            }
-        }
-
-        function positionTutorialPopup(popup, target, position) {
-            const rect = target.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const popupWidth = Math.min(350, viewportWidth - 40); // Responsive width
-
-            popup.style.position = 'fixed';
-            popup.style.maxWidth = popupWidth + 'px';
-            popup.style.width = popupWidth + 'px';
-            popup.style.zIndex = '1001';
-
-            // Calculate best position based on available space
-            let left, top;
-
-            switch (position) {
-                case 'top':
-                    left = Math.max(20, Math.min(rect.left + rect.width/2 - popupWidth/2, viewportWidth - popupWidth - 20));
-                    top = Math.max(20, rect.top - 200);
-                    break;
-                case 'bottom':
-                    left = Math.max(20, Math.min(rect.left + rect.width/2 - popupWidth/2, viewportWidth - popupWidth - 20));
-                    top = Math.min(rect.bottom + 20, viewportHeight - 250);
-                    break;
-                case 'left':
-                    left = Math.max(20, rect.left - popupWidth - 20);
-                    top = Math.max(20, Math.min(rect.top + rect.height/2 - 100, viewportHeight - 200));
-                    break;
-                case 'right':
-                    left = Math.min(rect.right + 20, viewportWidth - popupWidth - 20);
-                    top = Math.max(20, Math.min(rect.top + rect.height/2 - 100, viewportHeight - 200));
-                    break;
-                default:
-                    // Smart positioning - find the best spot
-                    if (rect.bottom + 220 < viewportHeight) {
-                        // Bottom has space
-                        position = 'bottom';
-                        left = Math.max(20, Math.min(rect.left + rect.width/2 - popupWidth/2, viewportWidth - popupWidth - 20));
-                        top = rect.bottom + 20;
-                    } else if (rect.top > 220) {
-                        // Top has space
-                        position = 'top';
-                        left = Math.max(20, Math.min(rect.left + rect.width/2 - popupWidth/2, viewportWidth - popupWidth - 20));
-                        top = rect.top - 200;
-                    } else if (rect.right + popupWidth + 40 < viewportWidth) {
-                        // Right has space
-                        position = 'right';
-                        left = rect.right + 20;
-                        top = Math.max(20, Math.min(rect.top + rect.height/2 - 100, viewportHeight - 200));
-                    } else {
-                        // Left has space or fallback
-                        position = 'left';
-                        left = Math.max(20, rect.left - popupWidth - 20);
-                        top = Math.max(20, Math.min(rect.top + rect.height/2 - 100, viewportHeight - 200));
-                    }
-                    break;
-            }
-
-            popup.style.left = left + 'px';
-            popup.style.top = top + 'px';
-
-            // Add arrow pointing to target
-            addTutorialArrow(popup, target, position, left, top);
-        }
-
-        function addTutorialArrow(popup, target, position, popupLeft, popupTop) {
-            // Remove any existing arrow
-            const existingArrow = popup.querySelector('.tutorial-arrow');
-            if (existingArrow) existingArrow.remove();
-
-            const arrow = document.createElement('div');
-            arrow.className = `tutorial-arrow ${position}`;
-
-            const targetRect = target.getBoundingClientRect();
-            const popupRect = popup.getBoundingClientRect();
-
-            switch (position) {
-                case 'top':
-                    arrow.style.left = Math.max(10, Math.min(targetRect.left + targetRect.width/2 - popupLeft - 10, popup.offsetWidth - 20)) + 'px';
-                    arrow.style.bottom = '-10px';
-                    break;
-                case 'bottom':
-                    arrow.style.left = Math.max(10, Math.min(targetRect.left + targetRect.width/2 - popupLeft - 10, popup.offsetWidth - 20)) + 'px';
-                    arrow.style.top = '-10px';
-                    break;
-                case 'left':
-                    arrow.style.right = '-10px';
-                    arrow.style.top = Math.max(10, Math.min(targetRect.top + targetRect.height/2 - popupTop - 10, 180)) + 'px';
-                    break;
-                case 'right':
-                    arrow.style.left = '-10px';
-                    arrow.style.top = Math.max(10, Math.min(targetRect.top + targetRect.height/2 - popupTop - 10, 180)) + 'px';
-                    break;
-            }
-
-            popup.appendChild(arrow);
-        }
 
         function nextTutorialStep() {
             const nextStep = tutorialData.currentStep + 1;
@@ -7190,17 +7462,24 @@
         function showTutorialCompletionModal() {
             const overlay = document.createElement('div');
             overlay.className = 'tutorial-overlay show';
+            overlay.id = 'tutorial-overlay'; // Add ID so it can be found by closeTutorialModal
 
             const popup = document.createElement('div');
             popup.className = 'tutorial-popup';
             popup.innerHTML = `
                 <div class="tutorial-header">
-                    <h3 class="text-xl font-bold text-green-600">🎉 Tutorial Complete!</h3>
-                    <p class="text-sm text-gray-600 mt-1">You're ready to start playing Word Hunt!</p>
+                    <button class="tutorial-close" onclick="closeTutorialModal()" title="Close tutorial">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h3>🎉 Tutorial Complete!</h3>
+                    <p>You're ready to start playing Word Hunt!</p>
                 </div>
                 <div class="tutorial-content">
-                    <p class="text-gray-700 mb-4">Great job! You've learned the basics of Word Hunt. Here's what you can do next:</p>
-                    <ul class="text-sm text-gray-600 space-y-2">
+                    <p class="mb-3">Great job! You've learned the basics of Word Hunt. Here's what you can do next:</p>
+                    <ul class="text-sm space-y-1">
                         <li>• Start with a 4×4 board to practice</li>
                         <li>• Try both timed and unlimited modes</li>
                         <li>• Check out the strategy guides for advanced tips</li>
@@ -7208,7 +7487,7 @@
                     </ul>
                 </div>
                 <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary" onclick="openTutorialMenu()">View Guides</button>
+                    <button class="tutorial-btn secondary" onclick="openTutorialMenu(); closeTutorialModal();">View Guides</button>
                     <button class="tutorial-btn" onclick="closeTutorialModal()">Start Playing!</button>
                 </div>
             `;
@@ -7218,10 +7497,11 @@
         }
 
         function removeTutorialElements() {
-            const overlay = document.getElementById('tutorial-overlay');
-            const highlight = document.getElementById('tutorial-highlight');
+            // Remove all tutorial overlays (including completion modals)
+            document.querySelectorAll('.tutorial-overlay').forEach(el => el.remove());
 
-            if (overlay) overlay.remove();
+            // Remove specific tutorial elements
+            const highlight = document.getElementById('tutorial-highlight');
             if (highlight) highlight.remove();
 
             // Remove tutorial path highlights
@@ -7241,169 +7521,18 @@
 
         function closeTutorialModal() {
             removeTutorialElements();
+
+            // Also remove any completion modals
+            const completionOverlay = document.getElementById('tutorial-overlay');
+            if (completionOverlay) {
+                completionOverlay.remove();
+            }
+
             // Return to opening UI after tutorial
             showOpeningUI();
         }
 
-        // New tutorial step functions for practice board
-        function createDemoTutorial(step, popup, overlay) {
-            // Demo tutorials allow board interaction
 
-            const target = step.target ? document.querySelector(step.target) : null;
-
-            if (target) {
-                const highlight = document.createElement('div');
-                highlight.className = 'tutorial-highlight';
-                highlight.id = 'tutorial-highlight';
-
-                const rect = target.getBoundingClientRect();
-                highlight.style.left = (rect.left - 5) + 'px';
-                highlight.style.top = (rect.top - 5) + 'px';
-                highlight.style.width = (rect.width + 10) + 'px';
-                highlight.style.height = (rect.height + 10) + 'px';
-
-                document.body.appendChild(highlight);
-                positionTutorialPopup(popup, target, step.position);
-            }
-
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-base font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-xs text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700 text-sm mb-2">${step.content}</p>
-                    <div class="bg-blue-50 rounded p-2">
-                        <p class="text-xs text-blue-700">👀 I'll highlight "${step.demoWord}" for you!</p>
-                    </div>
-                </div>
-                <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary text-xs py-1 px-2" onclick="skipTutorialStep()">Skip</button>
-                    <button class="tutorial-btn text-xs py-1 px-3" onclick="startTutorialDemo('${step.id}')">Show Me!</button>
-                </div>
-            `;
-        }
-
-        function createGuidedPracticeTutorial(step, popup, overlay) {
-            // Guided practice allows board interaction
-
-            const target = step.target ? document.querySelector(step.target) : null;
-
-            if (target) {
-                const highlight = document.createElement('div');
-                highlight.className = 'tutorial-highlight';
-                highlight.id = 'tutorial-highlight';
-
-                const rect = target.getBoundingClientRect();
-                highlight.style.left = (rect.left - 5) + 'px';
-                highlight.style.top = (rect.top - 5) + 'px';
-                highlight.style.width = (rect.width + 10) + 'px';
-                highlight.style.height = (rect.height + 10) + 'px';
-
-                document.body.appendChild(highlight);
-                positionTutorialPopup(popup, target, step.position);
-            }
-
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-base font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-xs text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700 text-sm mb-2">${step.content}</p>
-                    <div class="bg-green-50 rounded p-2">
-                        <p class="text-xs text-green-700">🎯 Find "${step.targetWord}" by connecting letters!</p>
-                    </div>
-                </div>
-                <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary text-xs py-1 px-2" onclick="showTutorialHint('${step.id}')">Hint?</button>
-                    <div class="text-xs text-gray-500">Try it!</div>
-                </div>
-            `;
-
-            // Set up guided practice listener
-            window.tutorialGuidedPractice = {
-                targetWord: step.targetWord,
-                targetPath: step.targetPath,
-                stepId: step.id
-            };
-        }
-
-        function createFreePracticeTutorial(step, popup, overlay) {
-            // Free practice allows board interaction
-
-            const target = step.target ? document.querySelector(step.target) : null;
-
-            if (target) {
-                const highlight = document.createElement('div');
-                highlight.className = 'tutorial-highlight';
-                highlight.id = 'tutorial-highlight';
-
-                const rect = target.getBoundingClientRect();
-                highlight.style.left = (rect.left - 5) + 'px';
-                highlight.style.top = (rect.top - 5) + 'px';
-                highlight.style.width = (rect.width + 10) + 'px';
-                highlight.style.height = (rect.height + 10) + 'px';
-
-                document.body.appendChild(highlight);
-                positionTutorialPopup(popup, target, step.position);
-            }
-
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-base font-bold text-gray-800">${step.title}</h3>
-                    <p class="text-xs text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700 text-sm mb-2">${step.content}</p>
-                    <div class="bg-yellow-50 rounded p-2 mb-2">
-                        <p class="text-xs text-yellow-700">📝 Progress: <span id="tutorial-words-found">0</span> / ${step.wordsNeeded} words</p>
-                    </div>
-                    <div class="text-xs text-gray-500">
-                        💡 Try: DOG, MAN, ORE, CODE, MANY
-                    </div>
-                </div>
-                <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary text-xs py-1 px-2" onclick="skipTutorialStep()">Skip</button>
-                    <div class="text-xs text-gray-500">Keep going!</div>
-                </div>
-            `;
-
-            // Set up free practice tracking
-            window.tutorialFreePractice = {
-                wordsNeeded: step.wordsNeeded,
-                wordsFound: 0,
-                startingWords: foundWords.size
-            };
-        }
-
-        function createCompletionTutorial(step, popup, overlay) {
-            // Completion tutorial should block interaction
-            overlay.classList.add('interactive');
-
-            popup.innerHTML = `
-                <div class="tutorial-header">
-                    <h3 class="text-xl font-bold text-green-600">🎉 ${step.title}</h3>
-                    <p class="text-sm text-gray-600 mt-1">${step.description}</p>
-                </div>
-                <div class="tutorial-content">
-                    <p class="text-gray-700 mb-4">${step.content}</p>
-                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-4">
-                        <h4 class="font-medium text-gray-800 mb-2">🎯 What's Next?</h4>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li>• Choose your preferred game mode</li>
-                            <li>• Try both 4×4 and 5×5 board sizes</li>
-                            <li>• Unlock achievements as you play</li>
-                            <li>• Check out strategy guides for advanced tips</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="tutorial-footer">
-                    <button class="tutorial-btn secondary" onclick="openTutorialMenu(); completeTutorial();">View Guides</button>
-                    <button class="tutorial-btn" onclick="completeTutorialAndStartGame()">Start Playing!</button>
-                </div>
-            `;
-        }
 
         // Tutorial interaction functions
         function startTutorialDemo(stepId) {
@@ -9894,6 +10023,568 @@
             window.startFirstTimeTutorial = startFirstTimeTutorial;
             window.skipFirstTimeTutorial = skipFirstTimeTutorial;
 
+            // Firebase Authentication Integration
+            let currentUser = null;
+            let authMode = 'signin'; // 'signin' or 'signup'
+
+            // UI update functions for Firebase
+            window.updateUIForSignedInUser = function(user) {
+                currentUser = user;
+                document.getElementById('auth-signed-out').classList.add('hidden');
+                document.getElementById('auth-signed-in').classList.remove('hidden');
+                document.getElementById('user-email').textContent = user.email;
+
+                // Restore game data from cloud first, then sync current data
+                restoreGameDataFromCloud().then(() => {
+                    syncGameDataToCloud();
+                });
+            };
+
+            window.updateUIForSignedOutUser = function() {
+                currentUser = null;
+                document.getElementById('auth-signed-out').classList.remove('hidden');
+                document.getElementById('auth-signed-in').classList.add('hidden');
+            };
+
+            // Authentication modal functions
+            function showAuthModal(mode = 'signin') {
+                authMode = mode;
+                const modal = document.getElementById('auth-modal');
+                const title = document.getElementById('auth-modal-title');
+                const subtitle = document.getElementById('auth-modal-subtitle');
+                const submitBtn = document.getElementById('auth-submit-btn');
+                const toggleBtn = document.getElementById('auth-toggle-btn');
+
+                if (mode === 'signin') {
+                    title.textContent = '🔑 Sign In';
+                    subtitle.textContent = 'Sign in to sync your progress';
+                    submitBtn.textContent = 'Sign In';
+                    toggleBtn.textContent = 'Need an account? Sign up';
+                } else {
+                    title.textContent = '📝 Create Account';
+                    subtitle.textContent = 'Create an account to sync your progress';
+                    submitBtn.textContent = 'Create Account';
+                    toggleBtn.textContent = 'Already have an account? Sign in';
+                }
+
+                // Clear form
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                document.getElementById('auth-error').classList.add('hidden');
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.bg-white').classList.remove('scale-95', 'opacity-0');
+                    modal.querySelector('.bg-white').classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function hideAuthModal() {
+                const modal = document.getElementById('auth-modal');
+                modal.querySelector('.bg-white').classList.add('scale-95', 'opacity-0');
+                modal.querySelector('.bg-white').classList.remove('scale-100', 'opacity-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            function showAuthError(message) {
+                const errorEl = document.getElementById('auth-error');
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+
+            // Sync game data to cloud
+            async function syncGameDataToCloud() {
+                if (!currentUser || !window.saveUserData) return;
+
+                const gameData = {
+                    highScores: {
+                        timedHighScores4x4: timedHighScores4x4,
+                        timedHighScores5x5: timedHighScores5x5,
+                        unlimitedHighScores4x4: unlimitedHighScores4x4,
+                        unlimitedHighScores5x5: unlimitedHighScores5x5
+                    },
+                    achievements: {},
+                    gameStats: {
+                        gamesPlayed: gamesPlayed,
+                        totalScore: totalScore,
+                        bestScore: bestScore,
+                        totalWordsFound: totalWordsFound
+                    },
+                    customization: {
+                        customizeEffectsUsed: Array.from(customizeEffectsUsed)
+                    },
+                    powerups: {
+                        inventory: Object.fromEntries(powerupInventory)
+                    },
+                    dailyChallenge: dailyChallengeData,
+                    analytics: {
+                        sessions: analyticsData.sessions.slice(-50), // Keep last 50 sessions
+                        performanceMetrics: analyticsData.performanceMetrics,
+                        insights: analyticsData.insights
+                    },
+                    tutorial: tutorialData,
+                    lastSyncDate: new Date().toISOString()
+                };
+
+                // Convert achievements to simple object
+                Object.entries(achievements).forEach(([key, achievement]) => {
+                    gameData.achievements[key] = achievement.unlocked;
+                });
+
+                const result = await window.saveUserData(gameData);
+                if (result.success) {
+                    console.log('Full game state synced to cloud successfully');
+                } else {
+                    console.error('Failed to sync game data:', result.error);
+                }
+            }
+
+            // Restore game data from cloud
+            async function restoreGameDataFromCloud() {
+                if (!currentUser || !window.firebaseDb) return;
+
+                try {
+                    const userDoc = await getDoc(doc(window.firebaseDb, "users", currentUser.uid));
+                    if (!userDoc.exists()) return;
+
+                    const cloudData = userDoc.data();
+
+                    // Restore high scores
+                    if (cloudData.highScores) {
+                        timedHighScores4x4 = cloudData.highScores.timedHighScores4x4 || [];
+                        timedHighScores5x5 = cloudData.highScores.timedHighScores5x5 || [];
+                        unlimitedHighScores4x4 = cloudData.highScores.unlimitedHighScores4x4 || [];
+                        unlimitedHighScores5x5 = cloudData.highScores.unlimitedHighScores5x5 || [];
+                    }
+
+                    // Restore achievements
+                    if (cloudData.achievements) {
+                        Object.entries(cloudData.achievements).forEach(([key, unlocked]) => {
+                            if (achievements[key]) {
+                                achievements[key].unlocked = unlocked;
+                            }
+                        });
+                    }
+
+                    // Restore game stats
+                    if (cloudData.gameStats) {
+                        gamesPlayed = cloudData.gameStats.gamesPlayed || 0;
+                        totalScore = cloudData.gameStats.totalScore || 0;
+                        bestScore = cloudData.gameStats.bestScore || 0;
+                        totalWordsFound = cloudData.gameStats.totalWordsFound || 0;
+                    }
+
+                    // Restore customization
+                    if (cloudData.customization) {
+                        customizeEffectsUsed = new Set(cloudData.customization.customizeEffectsUsed || []);
+                    }
+
+                    // Restore powerups
+                    if (cloudData.powerups && cloudData.powerups.inventory) {
+                        powerupInventory = new Map(Object.entries(cloudData.powerups.inventory));
+                        updatePowerupInventoryDisplay();
+                    }
+
+                    // Restore daily challenge data
+                    if (cloudData.dailyChallenge) {
+                        dailyChallengeData = { ...dailyChallengeData, ...cloudData.dailyChallenge };
+                    }
+
+                    // Restore analytics (merge with local data)
+                    if (cloudData.analytics) {
+                        if (cloudData.analytics.sessions) {
+                            analyticsData.sessions = [...analyticsData.sessions, ...cloudData.analytics.sessions];
+                            // Remove duplicates and keep most recent 100
+                            const uniqueSessions = analyticsData.sessions.filter((session, index, self) =>
+                                index === self.findIndex(s => s.id === session.id)
+                            );
+                            analyticsData.sessions = uniqueSessions.slice(-100);
+                        }
+                        if (cloudData.analytics.performanceMetrics) {
+                            analyticsData.performanceMetrics = { ...analyticsData.performanceMetrics, ...cloudData.analytics.performanceMetrics };
+                        }
+                        if (cloudData.analytics.insights) {
+                            analyticsData.insights = cloudData.analytics.insights;
+                        }
+                    }
+
+                    // Restore tutorial data
+                    if (cloudData.tutorial) {
+                        tutorialData = { ...tutorialData, ...cloudData.tutorial };
+                    }
+
+                    console.log('Game state restored from cloud successfully');
+
+                    // Save merged data to localStorage
+                    saveAchievements();
+                    saveAnalyticsData();
+                    saveTutorialData();
+                    saveDailyChallengeData();
+
+                } catch (error) {
+                    console.error('Failed to restore game data from cloud:', error);
+                }
+            }
+
+            // Event listeners for authentication
+            document.getElementById('show-sign-in-btn').addEventListener('click', () => showAuthModal('signin'));
+            document.getElementById('show-sign-up-btn').addEventListener('click', () => showAuthModal('signup'));
+            document.getElementById('auth-cancel-btn').addEventListener('click', hideAuthModal);
+            document.getElementById('auth-toggle-btn').addEventListener('click', () => {
+                showAuthModal(authMode === 'signin' ? 'signup' : 'signin');
+            });
+
+            document.getElementById('sign-out-btn').addEventListener('click', async () => {
+                if (window.firebaseSignOut) {
+                    const result = await window.firebaseSignOut();
+                    if (result.success) {
+                        console.log('Signed out successfully');
+                    } else {
+                        console.error('Sign out failed:', result.error);
+                    }
+                }
+            });
+
+            document.getElementById('auth-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+
+                if (!email || !password) {
+                    showAuthError('Please fill in all fields');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('auth-submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = authMode === 'signin' ? 'Signing in...' : 'Creating account...';
+
+                let result;
+                if (authMode === 'signin') {
+                    result = await window.firebaseSignIn(email, password);
+                } else {
+                    result = await window.firebaseSignUp(email, password);
+                }
+
+                if (result.success) {
+                    hideAuthModal();
+                } else {
+                    showAuthError(result.error);
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
+            });
+
+            // Social Features Integration
+            let currentRoom = null;
+            let roomListener = null;
+
+            // Social modal functions
+            function showSocialModal() {
+                const modal = document.getElementById('social-modal');
+                updateSocialUserStatus();
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.bg-white').classList.remove('scale-95', 'opacity-0');
+                    modal.querySelector('.bg-white').classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function hideSocialModal() {
+                const modal = document.getElementById('social-modal');
+                modal.querySelector('.bg-white').classList.add('scale-95', 'opacity-0');
+                modal.querySelector('.bg-white').classList.remove('scale-100', 'opacity-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            function updateSocialUserStatus() {
+                const statusEl = document.getElementById('social-user-status');
+                if (currentUser) {
+                    statusEl.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-medium text-green-700">✅ Signed In</div>
+                                <div class="text-sm text-gray-600">${currentUser.email}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-600">Ready for multiplayer!</div>
+                            </div>
+                        </div>
+                    `;
+                    statusEl.className = 'mb-6 p-4 rounded-lg border border-green-200 bg-green-50';
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="text-center">
+                            <div class="font-medium text-orange-700 mb-2">⚠️ Sign In Required</div>
+                            <div class="text-sm text-gray-600 mb-3">Sign in to access social features and multiplayer</div>
+                            <button onclick="hideSocialModal(); showAuthModal('signin')" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all text-sm">
+                                Sign In Now
+                            </button>
+                        </div>
+                    `;
+                    statusEl.className = 'mb-6 p-4 rounded-lg border border-orange-200 bg-orange-50';
+                }
+            }
+
+            // Global leaderboard functions
+            async function showGlobalLeaderboards() {
+                if (!currentUser) {
+                    showAuthModal('signin');
+                    return;
+                }
+
+                // Create leaderboard modal (simplified for now)
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-bold text-blue-600 mb-2">🌍 Global Leaderboards</h2>
+                            <p class="text-gray-600">Top players worldwide</p>
+                        </div>
+
+                        <div class="space-y-4" id="global-leaderboard-content">
+                            <div class="text-center py-4 text-gray-500">Loading...</div>
+                        </div>
+
+                        <div class="flex justify-center mt-6">
+                            <button onclick="this.closest('.fixed').remove()" class="py-2 px-6 text-gray-500 hover:text-gray-700 transition-all">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // Load global leaderboard data
+                loadGlobalLeaderboardData();
+            }
+
+            async function loadGlobalLeaderboardData() {
+                const content = document.getElementById('global-leaderboard-content');
+                if (!content) return;
+
+                try {
+                    const timedResult = await window.getGlobalLeaderboard('timed', 4, 10);
+                    const unlimitedResult = await window.getGlobalLeaderboard('unlimited', 4, 10);
+
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-3">🏃‍♂️ Timed Mode (4×4)</h3>
+                                <div class="space-y-2">
+                                    ${timedResult.scores.map((score, index) => `
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="font-bold text-lg ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-gray-400' : index === 2 ? 'text-orange-500' : 'text-gray-600'}">${index + 1}</span>
+                                                <div>
+                                                    <div class="font-medium">${score.displayName}</div>
+                                                    <div class="text-xs text-gray-500">${score.wordsFound} words</div>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-bold text-blue-600">${score.score}</div>
+                                                <div class="text-xs text-gray-500">${new Date(score.timestamp.toDate()).toLocaleDateString()}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-3">♾️ Unlimited Mode (4×4)</h3>
+                                <div class="space-y-2">
+                                    ${unlimitedResult.scores.map((score, index) => `
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <span class="font-bold text-lg ${index === 0 ? 'text-yellow-500' : index === 1 ? 'text-gray-400' : index === 2 ? 'text-orange-500' : 'text-gray-600'}">${index + 1}</span>
+                                                <div>
+                                                    <div class="font-medium">${score.displayName}</div>
+                                                    <div class="text-xs text-gray-500">${score.wordsFound} words</div>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-bold text-green-600">${score.score}</div>
+                                                <div class="text-xs text-gray-500">${new Date(score.timestamp.toDate()).toLocaleDateString()}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    content.innerHTML = `
+                        <div class="text-center py-4 text-red-500">
+                            Failed to load leaderboards: ${error.message}
+                        </div>
+                    `;
+                }
+            }
+
+            // Event listeners for social features
+            document.getElementById('opening-social-btn').addEventListener('click', showSocialModal);
+            document.getElementById('close-social-modal').addEventListener('click', hideSocialModal);
+            document.getElementById('global-leaderboards-btn').addEventListener('click', () => {
+                hideSocialModal();
+                showGlobalLeaderboards();
+            });
+
+            // Multiplayer room functions
+            async function createRoom() {
+                if (!currentUser) {
+                    showAuthModal('signin');
+                    return;
+                }
+
+                const settings = {
+                    boardSize: 4,
+                    duration: 120,
+                    maxPlayers: 2
+                };
+
+                const result = await window.createMultiplayerRoom(settings);
+                if (result.success) {
+                    currentRoom = result.roomCode;
+                    showRoomModal(result.roomCode, true);
+                    setupRoomListener(result.roomCode);
+                } else {
+                    alert('Failed to create room: ' + result.error);
+                }
+            }
+
+            async function joinRoom() {
+                if (!currentUser) {
+                    showAuthModal('signin');
+                    return;
+                }
+
+                const roomCode = prompt('Enter room code:');
+                if (!roomCode) return;
+
+                const result = await window.joinMultiplayerRoom(roomCode.toUpperCase());
+                if (result.success) {
+                    currentRoom = roomCode.toUpperCase();
+                    showRoomModal(roomCode.toUpperCase(), false);
+                    setupRoomListener(roomCode.toUpperCase());
+                } else {
+                    alert('Failed to join room: ' + result.error);
+                }
+            }
+
+            function showRoomModal(roomCode, isHost) {
+                const modal = document.getElementById('multiplayer-room-modal');
+                document.getElementById('room-code').textContent = roomCode;
+
+                // Hide/show settings based on host status
+                const settingsEl = document.getElementById('room-settings');
+                const startBtn = document.getElementById('start-multiplayer-game');
+
+                if (isHost) {
+                    settingsEl.style.display = 'block';
+                    startBtn.style.display = 'block';
+                } else {
+                    settingsEl.style.display = 'none';
+                    startBtn.style.display = 'none';
+                }
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.bg-white').classList.remove('scale-95', 'opacity-0');
+                    modal.querySelector('.bg-white').classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function hideRoomModal() {
+                const modal = document.getElementById('multiplayer-room-modal');
+                modal.querySelector('.bg-white').classList.add('scale-95', 'opacity-0');
+                modal.querySelector('.bg-white').classList.remove('scale-100', 'opacity-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+
+                // Clean up room listener
+                if (roomListener) {
+                    roomListener();
+                    roomListener = null;
+                }
+                currentRoom = null;
+            }
+
+            function setupRoomListener(roomCode) {
+                if (roomListener) {
+                    roomListener();
+                }
+
+                roomListener = window.listenToRoom(roomCode, (result) => {
+                    if (result.success) {
+                        updateRoomDisplay(result.roomData);
+                    } else {
+                        console.error('Room listener error:', result.error);
+                    }
+                });
+            }
+
+            function updateRoomDisplay(roomData) {
+                const playersList = document.getElementById('players-list');
+                const startBtn = document.getElementById('start-multiplayer-game');
+
+                playersList.innerHTML = roomData.players.map(player => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                ${player.displayName.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="font-medium">${player.displayName}</div>
+                                <div class="text-xs text-gray-500">${player.email}</div>
+                            </div>
+                        </div>
+                        <div class="text-sm ${player.ready ? 'text-green-600' : 'text-gray-500'}">
+                            ${player.ready ? '✅ Ready' : '⏳ Waiting'}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update player count
+                document.querySelector('#room-players h3').textContent = `Players (${roomData.players.length}/2)`;
+
+                // Enable/disable start button
+                const canStart = roomData.players.length >= 2 && roomData.players.every(p => p.ready);
+                startBtn.disabled = !canStart;
+            }
+
+            // Event listeners for multiplayer
+            document.getElementById('create-room-btn').addEventListener('click', () => {
+                hideSocialModal();
+                createRoom();
+            });
+
+            document.getElementById('join-room-btn').addEventListener('click', () => {
+                hideSocialModal();
+                joinRoom();
+            });
+
+            document.getElementById('leave-room-btn').addEventListener('click', hideRoomModal);
+
+            document.getElementById('copy-room-code').addEventListener('click', () => {
+                const roomCode = document.getElementById('room-code').textContent;
+                navigator.clipboard.writeText(roomCode).then(() => {
+                    const btn = document.getElementById('copy-room-code');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✅ Copied!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 2000);
+                });
+            });
+
             console.log("Game ready! You can use these console commands:");
             console.log("- endGame() - End the current game");
             console.log("- startNewGame() - Start a new game");
@@ -9902,5 +10593,308 @@
             console.log("- resetData() - Reset all game data (use with caution)");
         }
     </script>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+      // Import Firebase modules
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+      import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, onSnapshot, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+      import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBVtD8fwUQk3xnmeTMYv4VmB7llfZxqmjQ",
+        authDomain: "wordhunt-12766.firebaseapp.com",
+        projectId: "wordhunt-12766",
+        storageBucket: "wordhunt-12766.firebasestorage.app",
+        messagingSenderId: "539863984907",
+        appId: "1:539863984907:web:61dfa3b108815b03ff900e",
+        measurementId: "G-DQFS0NHGDF"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const rtdb = getDatabase(app);
+
+      // Make Firebase services available to the main script
+      window.firebaseApp = app;
+      window.firebaseAuth = auth;
+      window.firebaseDb = db;
+      window.firebaseRtdb = rtdb;
+
+      // Auth state listener
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("User signed in:", user.uid);
+          // Call a function in your main script
+          if (typeof updateUIForSignedInUser === 'function') {
+            updateUIForSignedInUser(user);
+          }
+          // Load user data
+          loadUserData(user.uid);
+        } else {
+          console.log("User signed out");
+          if (typeof updateUIForSignedOutUser === 'function') {
+            updateUIForSignedOutUser();
+          }
+        }
+      });
+
+      // Function to load user data
+      async function loadUserData(userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", userId));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+
+            // Update game data with user data
+            if (userData.highScores) {
+              // Update high scores in the main script
+              Object.keys(userData.highScores).forEach(key => {
+                if (window[key]) {
+                  window[key] = userData.highScores[key];
+                }
+              });
+            }
+
+            // Update achievements
+            if (userData.achievements && window.achievements) {
+              Object.entries(userData.achievements).forEach(([key, unlocked]) => {
+                if (window.achievements[key]) {
+                  window.achievements[key].unlocked = unlocked;
+                }
+              });
+            }
+
+            console.log("User data loaded successfully");
+          }
+        } catch (error) {
+          console.error("Error loading user data:", error);
+        }
+      }
+
+      // Expose functions to the main script
+      window.firebaseSignIn = async (email, password) => {
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.firebaseSignUp = async (email, password) => {
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.firebaseSignOut = async () => {
+        try {
+          await signOut(auth);
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.saveUserData = async (data) => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          await setDoc(doc(db, "users", auth.currentUser.uid), data, { merge: true });
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      // Global Leaderboard Functions
+      window.submitScoreToGlobalLeaderboard = async (gameMode, boardSize, score, wordsFound, gameTime) => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          const leaderboardRef = collection(db, "leaderboards", `${gameMode}_${boardSize}x${boardSize}`, "scores");
+          const scoreData = {
+            userId: auth.currentUser.uid,
+            userEmail: auth.currentUser.email,
+            displayName: auth.currentUser.displayName || auth.currentUser.email.split('@')[0],
+            score: score,
+            wordsFound: wordsFound,
+            gameTime: gameTime,
+            timestamp: new Date(),
+            gameMode: gameMode,
+            boardSize: boardSize
+          };
+
+          await addDoc(leaderboardRef, scoreData);
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.getGlobalLeaderboard = async (gameMode, boardSize, limit = 10) => {
+        try {
+          const leaderboardRef = collection(db, "leaderboards", `${gameMode}_${boardSize}x${boardSize}`, "scores");
+          const q = query(leaderboardRef, orderBy("score", "desc"), limit(limit));
+          const snapshot = await getDocs(q);
+
+          const scores = [];
+          snapshot.forEach(doc => {
+            scores.push({ id: doc.id, ...doc.data() });
+          });
+
+          return { success: true, scores };
+        } catch (error) {
+          return { success: false, error: error.message, scores: [] };
+        }
+      };
+
+      // Friends System Functions
+      window.sendFriendRequest = async (friendEmail) => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          const friendRequestRef = collection(db, "friendRequests");
+          await addDoc(friendRequestRef, {
+            fromUserId: auth.currentUser.uid,
+            fromEmail: auth.currentUser.email,
+            toEmail: friendEmail,
+            status: "pending",
+            timestamp: new Date()
+          });
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.getFriendsList = async () => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+          const userData = userDoc.data();
+          const friends = userData?.friends || [];
+          return { success: true, friends };
+        } catch (error) {
+          return { success: false, error: error.message, friends: [] };
+        }
+      };
+
+      // Multiplayer Room Functions
+      window.createMultiplayerRoom = async (settings) => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+          const roomRef = doc(db, "multiplayerRooms", roomCode);
+
+          const roomData = {
+            code: roomCode,
+            hostId: auth.currentUser.uid,
+            hostEmail: auth.currentUser.email,
+            players: [{
+              id: auth.currentUser.uid,
+              email: auth.currentUser.email,
+              displayName: auth.currentUser.displayName || auth.currentUser.email.split('@')[0],
+              ready: false,
+              score: 0,
+              wordsFound: []
+            }],
+            settings: settings,
+            status: "waiting", // waiting, playing, finished
+            createdAt: new Date(),
+            gameData: null
+          };
+
+          await setDoc(roomRef, roomData);
+          return { success: true, roomCode };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.joinMultiplayerRoom = async (roomCode) => {
+        if (!auth.currentUser) return { success: false, error: "Not signed in" };
+
+        try {
+          const roomRef = doc(db, "multiplayerRooms", roomCode);
+          const roomDoc = await getDoc(roomRef);
+
+          if (!roomDoc.exists()) {
+            return { success: false, error: "Room not found" };
+          }
+
+          const roomData = roomDoc.data();
+          if (roomData.players.length >= 2) {
+            return { success: false, error: "Room is full" };
+          }
+
+          if (roomData.status !== "waiting") {
+            return { success: false, error: "Game already in progress" };
+          }
+
+          const newPlayer = {
+            id: auth.currentUser.uid,
+            email: auth.currentUser.email,
+            displayName: auth.currentUser.displayName || auth.currentUser.email.split('@')[0],
+            ready: false,
+            score: 0,
+            wordsFound: []
+          };
+
+          await updateDoc(roomRef, {
+            players: [...roomData.players, newPlayer]
+          });
+
+          return { success: true, roomData: { ...roomData, players: [...roomData.players, newPlayer] } };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+
+      window.listenToRoom = (roomCode, callback) => {
+        const roomRef = doc(db, "multiplayerRooms", roomCode);
+        return onSnapshot(roomRef, (doc) => {
+          if (doc.exists()) {
+            callback({ success: true, roomData: doc.data() });
+          } else {
+            callback({ success: false, error: "Room not found" });
+          }
+        });
+      };
+
+      window.updatePlayerInRoom = async (roomCode, playerId, updates) => {
+        try {
+          const roomRef = doc(db, "multiplayerRooms", roomCode);
+          const roomDoc = await getDoc(roomRef);
+
+          if (!roomDoc.exists()) {
+            return { success: false, error: "Room not found" };
+          }
+
+          const roomData = roomDoc.data();
+          const updatedPlayers = roomData.players.map(player =>
+            player.id === playerId ? { ...player, ...updates } : player
+          );
+
+          await updateDoc(roomRef, { players: updatedPlayers });
+          return { success: true };
+        } catch (error) {
+          return { success: false, error: error.message };
+        }
+      };
+    </script>
+
 </body>
 </html>
