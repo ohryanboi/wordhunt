@@ -81,6 +81,143 @@
         .achievement-notification {
             animation: achievementSlide 0.3s ease-out;
         }
+
+        /* Mobile-responsive menu styles */
+        .mobile-menu-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .mobile-menu-content {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease-out;
+        }
+
+        .mobile-menu-content.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .mobile-menu-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-menu-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            border-radius: 0 0 1rem 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Desktop menu styles for larger screens */
+        @media (min-width: 768px) {
+            .mobile-menu-panel {
+                position: fixed;
+                top: 1rem;
+                left: auto;
+                right: 1rem;
+                bottom: auto;
+                background: transparent;
+                padding: 0;
+                align-items: flex-start;
+                justify-content: flex-end;
+            }
+
+            .mobile-menu-content {
+                max-width: 320px;
+                max-height: calc(100vh - 2rem);
+                transform: translateX(100%);
+                opacity: 1;
+            }
+
+            .mobile-menu-content.show {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-panel.left {
+                left: 1rem;
+                right: auto;
+                justify-content: flex-start;
+            }
+
+            .mobile-menu-panel.left .mobile-menu-content {
+                transform: translateX(-100%);
+            }
+
+            .mobile-menu-panel.left .mobile-menu-content.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Touch-friendly button styles */
+        .mobile-touch-btn {
+            min-height: 44px;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .mobile-touch-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Scrollbar styles for mobile menus */
+        .mobile-menu-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .mobile-menu-body::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-body::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-body::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
@@ -3158,7 +3295,85 @@
             }
         }
 
+        // Helper function to create mobile-responsive menu
+        function createMobileMenu(id, title, position = 'right') {
+            const menuPanel = document.createElement('div');
+            menuPanel.id = id;
+            menuPanel.className = `mobile-menu-panel ${position}`;
 
+            const menuContent = document.createElement('div');
+            menuContent.className = 'mobile-menu-content';
+
+            menuContent.innerHTML = `
+                <div class="mobile-menu-header">
+                    <h3 class="text-lg font-bold text-purple-800">${title}</h3>
+                    <button class="close-menu-btn text-gray-500 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mobile-menu-body">
+                    <!-- Content will be added here -->
+                </div>
+                <div class="mobile-menu-footer">
+                    <div class="text-xs text-gray-500 text-center">
+                        <!-- Footer content will be added here -->
+                    </div>
+                </div>
+            `;
+
+            menuPanel.appendChild(menuContent);
+            return { menuPanel, menuContent };
+        }
+
+        // Helper function to show mobile menu with animation
+        function showMobileMenu(menuPanel) {
+            document.body.appendChild(menuPanel);
+
+            // Force reflow
+            menuPanel.offsetHeight;
+
+            // Show with animation
+            const content = menuPanel.querySelector('.mobile-menu-content');
+            content.classList.add('show');
+
+            // Set up close handlers
+            const closeBtn = menuPanel.querySelector('.close-menu-btn');
+            closeBtn.addEventListener('click', () => closeMobileMenu(menuPanel));
+
+            // Close on backdrop click (mobile only)
+            if (window.innerWidth < 768) {
+                menuPanel.addEventListener('click', (e) => {
+                    if (e.target === menuPanel) {
+                        closeMobileMenu(menuPanel);
+                    }
+                });
+            } else {
+                // Desktop: close on outside click
+                setTimeout(() => {
+                    document.addEventListener('click', function handleOutsideClick(e) {
+                        if (!menuPanel.contains(e.target)) {
+                            closeMobileMenu(menuPanel);
+                            document.removeEventListener('click', handleOutsideClick);
+                        }
+                    });
+                }, 100);
+            }
+        }
+
+        // Helper function to close mobile menu with animation
+        function closeMobileMenu(menuPanel) {
+            const content = menuPanel.querySelector('.mobile-menu-content');
+            content.classList.remove('show');
+
+            setTimeout(() => {
+                if (menuPanel.parentNode) {
+                    document.body.removeChild(menuPanel);
+                }
+            }, 200);
+        }
 
         // Open the secret menu
         function openSecretMenu() {
@@ -3177,187 +3392,150 @@
                 saveAchievements();
             }
 
-            // Create the secret menu panel (positioned to the side)
-            const menuPanel = document.createElement('div');
-            menuPanel.id = 'secret-menu-panel';
-            menuPanel.className = 'fixed top-4 right-4 bg-white rounded-xl shadow-2xl border-2 border-purple-300 z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col';
-            menuPanel.style.width = 'min(320px, calc(100vw - 2rem))';
-            menuPanel.style.maxHeight = 'calc(100vh - 2rem)';
+            // Create the mobile-responsive secret menu
+            const { menuPanel, menuContent } = createMobileMenu('secret-menu-panel', '🔮 Secret Menu', 'right');
+
+            // Get the menu body to add content
+            const menuBody = menuContent.querySelector('.mobile-menu-body');
+            const menuFooter = menuContent.querySelector('.mobile-menu-footer div');
 
             // Create the menu content with new commands
-            menuPanel.innerHTML = `
-                <div class="flex justify-between items-center p-4 border-b border-gray-200 flex-shrink-0">
-                    <h3 class="text-lg font-bold text-purple-800">🔮 Secret Menu</h3>
-                    <button id="close-secret-menu" class="text-gray-500 hover:text-gray-800 p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
+            menuBody.innerHTML = `
+                <div class="space-y-1">
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white" data-command="GODMODE">
+                        <div>
+                            <div class="font-medium">🔮 God Mode</div>
+                            <div class="text-xs opacity-75">All words valid</div>
+                        </div>
                     </button>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4" style="scrollbar-width: thin; scrollbar-color: #cbd5e0 #f7fafc;">
-                    <style>
-                        #secret-menu-panel .flex-1::-webkit-scrollbar {
-                            width: 6px;
-                        }
-                        #secret-menu-panel .flex-1::-webkit-scrollbar-track {
-                            background: #f7fafc;
-                            border-radius: 3px;
-                        }
-                        #secret-menu-panel .flex-1::-webkit-scrollbar-thumb {
-                            background: #cbd5e0;
-                            border-radius: 3px;
-                        }
-                        #secret-menu-panel .flex-1::-webkit-scrollbar-thumb:hover {
-                            background: #a0aec0;
-                        }
-                    </style>
 
-                    <div class="space-y-2">
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all text-sm" data-command="GODMODE">
-                            🔮 God Mode <span class="block text-xs opacity-75">All words valid</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white rounded-lg hover:from-blue-600 hover:to-teal-500 transition-all text-sm" data-command="ALLWORDS">
-                            📖 Show All Words <span class="block text-xs opacity-75">Cheat sheet</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all text-sm" data-command="EXTRATIME">
-                            ⏰ Extra Time <span class="block text-xs opacity-75">+30 seconds</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all text-sm" data-command="BIGPOINTS">
-                            💎 Big Points <span class="block text-xs opacity-75">5x scoring</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-blue-400 to-cyan-500 text-white rounded-lg hover:from-blue-500 hover:to-cyan-600 transition-all text-sm" data-command="SLOWTIME">
-                            🐌 Slow Time <span class="block text-xs opacity-75">Half speed timer</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-lg hover:from-amber-500 hover:to-yellow-600 transition-all text-sm" data-command="SHUFFLE">
-                            🔀 Shuffle <span class="block text-xs opacity-75">New letters</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-lg hover:from-cyan-500 hover:to-blue-600 transition-all text-sm" data-command="FREEZE">
-                            ❄️ Freeze Timer <span class="block text-xs opacity-75">Stop the clock</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-lg hover:from-emerald-500 hover:to-teal-600 transition-all text-sm" data-command="BOOST">
-                            🚀 Score Boost <span class="block text-xs opacity-75">+1000 points</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-violet-400 to-purple-500 text-white rounded-lg hover:from-violet-500 hover:to-purple-600 transition-all text-sm" data-command="HINT">
-                            💡 Show Hint <span class="block text-xs opacity-75">Word suggestion</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-white rounded-lg hover:from-yellow-500 hover:to-amber-600 transition-all text-sm" data-command="LUCKY">
-                            🍀 Lucky Grid <span class="block text-xs opacity-75">Easy letters</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-rose-400 to-red-500 text-white rounded-lg hover:from-rose-500 hover:to-red-600 transition-all text-sm" data-command="RESET">
-                            🔄 Reset Score <span class="block text-xs opacity-75">Back to zero</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-lime-400 to-green-500 text-white rounded-lg hover:from-lime-500 hover:to-green-600 transition-all text-sm" data-command="DOUBLE">
-                            ✨ Double Points <span class="block text-xs opacity-75">2x scoring</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-lg hover:from-amber-500 hover:to-orange-500 transition-all text-sm" data-command="REVEAL">
-                            👁️ Reveal Grid <span class="block text-xs opacity-75">Highlight tiles</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-sky-400 to-blue-400 text-white rounded-lg hover:from-sky-500 hover:to-blue-500 transition-all text-sm" data-command="SPEED">
-                            ⚡ Speed Mode <span class="block text-xs opacity-75">Fast animations</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all text-sm" data-command="INFINITE">
-                            ♾️ Infinite Time <span class="block text-xs opacity-75">No timer limit</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all text-sm" data-command="VOWELS">
-                            🅰️ Vowel Grid <span class="block text-xs opacity-75">All vowels</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg hover:from-yellow-700 hover:to-orange-700 transition-all text-sm" data-command="MEGA">
-                            💰 Mega Points <span class="block text-xs opacity-75">10x scoring</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-gray-500 to-gray-700 text-white rounded-lg hover:from-gray-600 hover:to-gray-800 transition-all text-sm" data-command="GHOST">
-                            👻 Ghost Mode <span class="block text-xs opacity-75">Transparent tiles</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-lg hover:from-green-700 hover:to-emerald-800 transition-all text-sm" data-command="MATRIX">
-                            🕶️ Matrix Rain <span class="block text-xs opacity-75">Digital rain effect</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white rounded-lg hover:from-cyan-600 hover:to-teal-700 transition-all text-sm" data-command="TELEPORT">
-                            🌀 Teleport Tiles <span class="block text-xs opacity-75">Tiles swap positions</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-lg hover:from-purple-700 hover:to-indigo-800 transition-all text-sm" data-command="QUANTUM">
-                            ⚛️ Quantum Grid <span class="block text-xs opacity-75">Letters phase shift</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-lg hover:from-red-600 hover:to-pink-700 transition-all text-sm" data-command="LASER">
-                            🔴 Laser Mode <span class="block text-xs opacity-75">Laser beam effects</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white rounded-lg hover:from-blue-700 hover:to-purple-800 transition-all text-sm" data-command="PORTAL">
-                            🌌 Portal Effect <span class="block text-xs opacity-75">Dimensional portals</span>
-                        </button>
-
-                        <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-orange-600 to-red-700 text-white rounded-lg hover:from-orange-700 hover:to-red-800 transition-all text-sm" data-command="CHAOS">
-                            🌪️ Chaos Mode <span class="block text-xs opacity-75">Random everything</span>
-                        </button>
-
-                        <div class="border-t border-red-200 my-2 pt-2">
-                            <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-gray-600 to-gray-800 text-white rounded-lg hover:from-gray-700 hover:to-gray-900 transition-all text-sm font-bold" data-command="REMOVE_ALL_SECRET">
-                                🧹 Remove All Effects <span class="block text-xs opacity-75">Clear all secret effects</span>
-                            </button>
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-blue-500 to-teal-400 text-white" data-command="ALLWORDS">
+                        <div>
+                            <div class="font-medium">📖 Show All Words</div>
+                            <div class="text-xs opacity-75">Cheat sheet</div>
                         </div>
+                    </button>
 
-                        <div class="border-t border-gray-200 my-2 pt-2">
-                            <button class="secret-command-btn w-full py-2 px-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:from-red-700 hover:to-red-900 transition-all text-sm" data-command="ENDGAME">
-                                🏁 End Game <span class="block text-xs opacity-75">Finish current game</span>
-                            </button>
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-yellow-500 to-orange-500 text-white" data-command="EXTRATIME">
+                        <div>
+                            <div class="font-medium">⏰ Extra Time</div>
+                            <div class="text-xs opacity-75">+30 seconds</div>
                         </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-green-500 to-emerald-500 text-white" data-command="BIGPOINTS">
+                        <div>
+                            <div class="font-medium">💎 Big Points</div>
+                            <div class="text-xs opacity-75">5x scoring</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-blue-400 to-cyan-500 text-white" data-command="SLOWTIME">
+                        <div>
+                            <div class="font-medium">🐌 Slow Time</div>
+                            <div class="text-xs opacity-75">Half speed timer</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-amber-400 to-yellow-500 text-white" data-command="SHUFFLE">
+                        <div>
+                            <div class="font-medium">🔀 Shuffle</div>
+                            <div class="text-xs opacity-75">New letters</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-cyan-400 to-blue-500 text-white" data-command="FREEZE">
+                        <div>
+                            <div class="font-medium">❄️ Freeze Timer</div>
+                            <div class="text-xs opacity-75">Stop the clock</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-emerald-400 to-teal-500 text-white" data-command="BOOST">
+                        <div>
+                            <div class="font-medium">🚀 Score Boost</div>
+                            <div class="text-xs opacity-75">+1000 points</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-violet-400 to-purple-500 text-white" data-command="HINT">
+                        <div>
+                            <div class="font-medium">💡 Show Hint</div>
+                            <div class="text-xs opacity-75">Word suggestion</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-yellow-400 to-amber-500 text-white" data-command="LUCKY">
+                        <div>
+                            <div class="font-medium">🍀 Lucky Grid</div>
+                            <div class="text-xs opacity-75">Easy letters</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-rose-400 to-red-500 text-white" data-command="RESET">
+                        <div>
+                            <div class="font-medium">🔄 Reset Score</div>
+                            <div class="text-xs opacity-75">Back to zero</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-lime-400 to-green-500 text-white" data-command="DOUBLE">
+                        <div>
+                            <div class="font-medium">✨ Double Points</div>
+                            <div class="text-xs opacity-75">2x scoring</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-amber-400 to-orange-400 text-white" data-command="REVEAL">
+                        <div>
+                            <div class="font-medium">👁️ Reveal Grid</div>
+                            <div class="text-xs opacity-75">Highlight tiles</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-sky-400 to-blue-400 text-white" data-command="SPEED">
+                        <div>
+                            <div class="font-medium">⚡ Speed Mode</div>
+                            <div class="text-xs opacity-75">Fast animations</div>
+                        </div>
+                    </button>
+
+                    <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-indigo-500 to-purple-600 text-white" data-command="INFINITE">
+                        <div>
+                            <div class="font-medium">♾️ Infinite Time</div>
+                            <div class="text-xs opacity-75">No timer limit</div>
+                        </div>
+                    </button>
+
+                    <div class="border-t border-gray-300 my-3 pt-3">
+                        <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-gray-600 to-gray-800 text-white font-bold" data-command="REMOVE_ALL_SECRET">
+                            <div>
+                                <div class="font-medium">🧹 Remove All Effects</div>
+                                <div class="text-xs opacity-75">Clear all secret effects</div>
+                            </div>
+                        </button>
                     </div>
 
-                    <div class="mt-3 text-xs text-gray-500 text-center border-t border-gray-200 pt-2">
-                        💡 Type command names during gameplay
+                    <div class="border-t border-red-300 my-3 pt-3">
+                        <button class="mobile-touch-btn secret-command-btn bg-gradient-to-r from-red-600 to-red-800 text-white" data-command="ENDGAME">
+                            <div>
+                                <div class="font-medium">🏁 End Game</div>
+                                <div class="text-xs opacity-75">Finish current game</div>
+                            </div>
+                        </button>
                     </div>
                 </div>
-                <div class="p-3 border-t border-gray-200 bg-gray-50 rounded-b-xl flex-shrink-0">
-                    <div class="text-xs text-gray-500 text-center">
-                        🎮 Secret commands activated!
-                    </div>
+
+                <div class="mt-4 text-xs text-gray-500 text-center border-t border-gray-200 pt-3">
+                    💡 Type command names during gameplay
                 </div>
             `;
 
-            // Add the panel to the body
-            document.body.appendChild(menuPanel);
+            // Set footer content
+            menuFooter.textContent = '🎮 Secret commands activated!';
 
-            // Animate in
-            setTimeout(() => {
-                menuPanel.classList.remove('translate-x-full');
-            }, 10);
-
-            // Set up event listeners for the menu
-            menuPanel.querySelector('#close-secret-menu').addEventListener('click', () => {
-                closeSecretMenu();
-            });
-
-            // Close when clicking outside the menu (with delay to prevent immediate closing)
-            setTimeout(() => {
-                document.addEventListener('click', handleSecretMenuOutsideClick);
-            }, 100);
-
-            function handleSecretMenuOutsideClick(e) {
-                if (!menuPanel.contains(e.target)) {
-                    closeSecretMenu();
-                    document.removeEventListener('click', handleSecretMenuOutsideClick);
-                }
-            }
+            // Show the menu using the mobile-responsive system
+            showMobileMenu(menuPanel);
 
             // Set up command buttons
             const commandButtons = menuPanel.querySelectorAll('.secret-command-btn');
@@ -3367,286 +3545,175 @@
                     if (command && SECRET_COMMANDS[command]) {
                         SECRET_COMMANDS[command]();
                         showSecretCommandNotification(command);
-                        closeSecretMenu();
+                        closeMobileMenu(menuPanel);
                     }
                 });
             });
         }
 
-        // Close the secret menu
+        // Close the secret menu (legacy function for compatibility)
         function closeSecretMenu() {
             const menuPanel = document.getElementById('secret-menu-panel');
-            if (!menuPanel) return;
-
-            // Animate out
-            menuPanel.classList.add('translate-x-full');
-
-            // Remove after animation
-            setTimeout(() => {
-                if (menuPanel.parentNode) {
-                    document.body.removeChild(menuPanel);
-                }
-            }, 300);
+            if (menuPanel) {
+                closeMobileMenu(menuPanel);
+            }
         }
 
         // Open the customize menu
         function openCustomizeMenu() {
             console.log("Customize menu opened");
 
-            // Create the customize menu panel (positioned to the side)
-            const menuPanel = document.createElement('div');
-            menuPanel.id = 'customize-menu-panel';
-            menuPanel.className = 'fixed top-4 left-4 bg-white rounded-xl shadow-2xl border-2 border-purple-300 z-50 transform -translate-x-full transition-transform duration-300 ease-out flex flex-col';
-            menuPanel.style.width = 'min(320px, calc(100vw - 2rem))';
-            menuPanel.style.maxHeight = 'calc(100vh - 2rem)';
+            // Create the mobile-responsive customize menu
+            const { menuPanel, menuContent } = createMobileMenu('customize-menu-panel', '🎨 Customize', 'left');
+
+            // Get the menu body to add content
+            const menuBody = menuContent.querySelector('.mobile-menu-body');
+            const menuFooter = menuContent.querySelector('.mobile-menu-footer div');
 
             // Create the menu content
-            menuPanel.innerHTML = `
-                <div class="flex justify-between items-center p-4 border-b border-gray-200 flex-shrink-0">
-                    <h3 class="text-lg font-bold text-purple-800">🎨 Customize</h3>
-                    <button id="close-customize-menu" class="text-gray-500 hover:text-gray-800 p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
+            menuBody.innerHTML = `
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold text-gray-700 mb-2">✨ Visual Effects</h4>
+
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-red-500 to-pink-500 text-white" data-effect="RAINBOW">
+                        <div>
+                            <div class="font-medium">🌈 Rainbow Mode</div>
+                            <div class="text-xs opacity-75">Colorful tiles</div>
+                        </div>
                     </button>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4" style="scrollbar-width: thin; scrollbar-color: #cbd5e0 #f7fafc;">
-                    <style>
-                        #customize-menu-panel .flex-1::-webkit-scrollbar {
-                            width: 6px;
-                        }
-                        #customize-menu-panel .flex-1::-webkit-scrollbar-track {
-                            background: #f7fafc;
-                            border-radius: 3px;
-                        }
-                        #customize-menu-panel .flex-1::-webkit-scrollbar-thumb {
-                            background: #cbd5e0;
-                            border-radius: 3px;
-                        }
-                        #customize-menu-panel .flex-1::-webkit-scrollbar-thumb:hover {
-                            background: #a0aec0;
-                        }
-                    </style>
 
-                    <div class="space-y-2">
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all text-sm" data-effect="RAINBOW">
-                            🌈 Rainbow Mode <span class="block text-xs opacity-75">Colorful tiles</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-gray-700 to-gray-900 text-white" data-effect="DARKMODE">
+                        <div>
+                            <div class="font-medium">🌙 Dark Mode</div>
+                            <div class="text-xs opacity-75">Night theme</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-gray-700 to-gray-900 text-white rounded-lg hover:from-gray-800 hover:to-black transition-all text-sm" data-effect="DARKMODE">
-                            🌙 Dark Mode <span class="block text-xs opacity-75">Night theme</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-pink-400 to-purple-400 text-white" data-effect="CONFETTI">
+                        <div>
+                            <div class="font-medium">🎉 Confetti</div>
+                            <div class="text-xs opacity-75">Celebration!</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-lg hover:from-pink-500 hover:to-purple-500 transition-all text-sm" data-effect="CONFETTI">
-                            🎉 Confetti <span class="block text-xs opacity-75">Celebration!</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-orange-400 to-red-400 text-white" data-effect="FLASH">
+                        <div>
+                            <div class="font-medium">⚡ Flash Mode</div>
+                            <div class="text-xs opacity-75">Disco lights!</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-lg hover:from-orange-500 hover:to-red-500 transition-all text-sm" data-effect="FLASH">
-                            ⚡ Flash Mode <span class="block text-xs opacity-75">Disco lights!</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-indigo-400 to-purple-400 text-white" data-effect="ZOOM">
+                        <div>
+                            <div class="font-medium">🔍 Zoom Grid</div>
+                            <div class="text-xs opacity-75">Bigger tiles</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-indigo-400 to-purple-400 text-white rounded-lg hover:from-indigo-500 hover:to-purple-500 transition-all text-sm" data-effect="ZOOM">
-                            🔍 Zoom Grid <span class="block text-xs opacity-75">Bigger tiles</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-teal-400 to-cyan-400 text-white" data-effect="SPIN">
+                        <div>
+                            <div class="font-medium">🌀 Spin Grid</div>
+                            <div class="text-xs opacity-75">360° rotation</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-teal-400 to-cyan-400 text-white rounded-lg hover:from-teal-500 hover:to-cyan-500 transition-all text-sm" data-effect="SPIN">
-                            🌀 Spin Grid <span class="block text-xs opacity-75">360° rotation</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-emerald-400 to-green-400 text-white" data-effect="GLOW">
+                        <div>
+                            <div class="font-medium">✨ Glow Mode</div>
+                            <div class="text-xs opacity-75">Glowing border</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-400 to-pink-400 text-white rounded-lg hover:from-red-500 hover:to-pink-500 transition-all text-sm" data-effect="SHAKE">
-                            📳 Shake Grid <span class="block text-xs opacity-75">Earthquake!</span>
-                        </button>
+                    <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-green-400 to-green-600 text-white" data-effect="MATRIX">
+                        <div>
+                            <div class="font-medium">🕶️ Matrix Mode</div>
+                            <div class="text-xs opacity-75">Enter the Matrix</div>
+                        </div>
+                    </button>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-emerald-400 to-green-400 text-white rounded-lg hover:from-emerald-500 hover:to-green-500 transition-all text-sm" data-effect="GLOW">
-                            ✨ Glow Mode <span class="block text-xs opacity-75">Glowing border</span>
-                        </button>
+                    <div class="border-t border-gray-300 my-3 pt-3">
+                        <h4 class="text-sm font-bold text-gray-700 mb-2">🎨 Popular Effects</h4>
 
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-lg hover:from-purple-500 hover:to-pink-500 transition-all text-sm" data-effect="MAGIC">
-                            🪄 Magic Grid <span class="block text-xs opacity-75">Magical animation</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg hover:from-green-500 hover:to-green-700 transition-all text-sm" data-effect="MATRIX">
-                            🕶️ Matrix Mode <span class="block text-xs opacity-75">Enter the Matrix</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-pink-500 to-violet-500 text-white rounded-lg hover:from-pink-600 hover:to-violet-600 transition-all text-sm" data-effect="NEON">
-                            💡 Neon Mode <span class="block text-xs opacity-75">Glowing neon tiles</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-orange-400 to-pink-400 text-white rounded-lg hover:from-orange-500 hover:to-pink-500 transition-all text-sm" data-effect="RETRO">
-                            📼 Retro Mode <span class="block text-xs opacity-75">80s vibes</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-blue-300 to-white text-gray-800 rounded-lg hover:from-blue-400 hover:to-gray-100 transition-all text-sm" data-effect="SNOW">
-                            ❄️ Snow Effect <span class="block text-xs opacity-75">Falling snowflakes</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-all text-sm" data-effect="FIRE">
-                            🔥 Fire Mode <span class="block text-xs opacity-75">Burning effect</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-blue-400 to-cyan-300 text-white rounded-lg hover:from-blue-500 hover:to-cyan-400 transition-all text-sm" data-effect="BUBBLE">
-                            🫧 Bubble Mode <span class="block text-xs opacity-75">Floating bubbles</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-purple-400 to-blue-400 text-white rounded-lg hover:from-purple-500 hover:to-blue-500 transition-all text-sm" data-effect="PULSE">
-                            💓 Pulse Mode <span class="block text-xs opacity-75">Breathing tiles</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all text-sm" data-effect="GRADIENT">
-                            🌈 Gradient Tiles <span class="block text-xs opacity-75">Colorful gradients</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-gray-500 to-gray-700 text-white rounded-lg hover:from-gray-600 hover:to-gray-800 transition-all text-sm" data-effect="MIRROR">
-                            🪞 Mirror Mode <span class="block text-xs opacity-75">Flip the grid</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-lg hover:from-teal-500 hover:to-blue-600 transition-all text-sm" data-effect="WAVE">
-                            🌊 Wave Effect <span class="block text-xs opacity-75">Ripple animation</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all text-sm" data-effect="DISCO">
-                            🕺 Disco Mode <span class="block text-xs opacity-75">Flashing colors</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-cyan-400 to-blue-600 text-white rounded-lg hover:from-cyan-500 hover:to-blue-700 transition-all text-sm" data-effect="HOLOGRAM">
-                            📡 Hologram <span class="block text-xs opacity-75">Futuristic effect</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all text-sm" data-effect="CYBERPUNK">
-                            🤖 Cyberpunk <span class="block text-xs opacity-75">Neon cyber theme</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all text-sm" data-effect="VINTAGE">
-                            📷 Vintage <span class="block text-xs opacity-75">Old photo filter</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all text-sm" data-effect="GLITCH">
-                            📺 Glitch <span class="block text-xs opacity-75">Digital corruption</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg hover:from-green-500 hover:to-blue-600 transition-all text-sm" data-effect="AURORA">
-                            🌌 Aurora <span class="block text-xs opacity-75">Northern lights</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-indigo-400 to-purple-500 text-white rounded-lg hover:from-indigo-500 hover:to-purple-600 transition-all text-sm" data-effect="CRYSTAL">
-                            💎 Crystal <span class="block text-xs opacity-75">Gem-like shine</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-all text-sm" data-effect="LAVA">
-                            🌋 Lava <span class="block text-xs opacity-75">Molten rock effect</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-yellow-400 to-blue-500 text-white rounded-lg hover:from-yellow-500 hover:to-blue-600 transition-all text-sm" data-effect="ELECTRIC">
-                            ⚡ Electric <span class="block text-xs opacity-75">Lightning bolts</span>
-                        </button>
-
-                        <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-purple-700 to-indigo-800 text-white rounded-lg hover:from-purple-800 hover:to-indigo-900 transition-all text-sm" data-effect="COSMIC">
-                            🌠 Cosmic <span class="block text-xs opacity-75">Galaxy theme</span>
-                        </button>
-
-                        <div class="border-t border-yellow-300 my-3 pt-3">
-                            <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg hover:from-yellow-600 hover:to-orange-600 transition-all text-sm font-bold" data-effect="ACHIEVEMENTS">
-                                🏆 Achievements <span class="block text-xs opacity-75">View your progress</span>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-pink-500 to-violet-500 text-white text-sm" data-effect="NEON">
+                                <div class="text-center">
+                                    <div class="font-medium">💡 Neon</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-blue-300 to-white text-gray-800 text-sm" data-effect="SNOW">
+                                <div class="text-center">
+                                    <div class="font-medium">❄️ Snow</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm" data-effect="FIRE">
+                                <div class="text-center">
+                                    <div class="font-medium">🔥 Fire</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-purple-400 to-blue-400 text-white text-sm" data-effect="PULSE">
+                                <div class="text-center">
+                                    <div class="font-medium">💓 Pulse</div>
+                                </div>
                             </button>
                         </div>
+                    </div>
 
-                        <div class="border-t border-red-300 my-3 pt-3">
-                            <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:from-red-700 hover:to-red-900 transition-all text-sm font-bold" data-effect="REMOVE_ALL_CUSTOMIZE">
-                                🧹 Remove All Effects <span class="block text-xs opacity-75">Clear all customizations</span>
+                    <div class="border-t border-gray-300 my-3 pt-3">
+                        <h4 class="text-sm font-bold text-gray-700 mb-2">🌈 Background Themes</h4>
+
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-blue-400 to-blue-600 text-white text-sm" data-effect="BG_BLUE">
+                                <div class="text-center">
+                                    <div class="font-medium">🔵 Blue</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-purple-400 to-purple-600 text-white text-sm" data-effect="BG_PURPLE">
+                                <div class="text-center">
+                                    <div class="font-medium">🟣 Purple</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-green-400 to-green-600 text-white text-sm" data-effect="BG_GREEN">
+                                <div class="text-center">
+                                    <div class="font-medium">🟢 Green</div>
+                                </div>
+                            </button>
+                            <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-orange-400 to-pink-500 text-white text-sm" data-effect="BG_SUNSET">
+                                <div class="text-center">
+                                    <div class="font-medium">🌅 Sunset</div>
+                                </div>
                             </button>
                         </div>
-
-                        <div class="border-t border-gray-300 my-3 pt-3">
-                            <h4 class="text-sm font-bold text-gray-700 mb-2 text-center">🎨 Background Colors</h4>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button class="customize-effect-btn py-2 px-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg hover:from-blue-500 hover:to-blue-700 transition-all text-xs" data-effect="BG_BLUE">
-                                    🔵 Blue
-                                </button>
-                                <button class="customize-effect-btn py-2 px-2 bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded-lg hover:from-purple-500 hover:to-purple-700 transition-all text-xs" data-effect="BG_PURPLE">
-                                    🟣 Purple
-                                </button>
-                                <button class="customize-effect-btn py-2 px-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg hover:from-green-500 hover:to-green-700 transition-all text-xs" data-effect="BG_GREEN">
-                                    🟢 Green
-                                </button>
-                                <button class="customize-effect-btn py-2 px-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white rounded-lg hover:from-orange-500 hover:to-pink-600 transition-all text-xs" data-effect="BG_SUNSET">
-                                    🌅 Sunset
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-gray-300 my-3 pt-3">
-                            <h4 class="text-sm font-bold text-gray-700 mb-2 text-center">🌈 Background Themes</h4>
-                            <div class="space-y-2">
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-lg hover:from-cyan-500 hover:to-blue-600 transition-all text-sm" data-effect="BG_OCEAN">
-                                    🌊 Ocean Waves <span class="block text-xs opacity-75">Deep blue gradient</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all text-sm" data-effect="BG_FOREST">
-                                    🌲 Forest <span class="block text-xs opacity-75">Nature greens</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-indigo-900 to-purple-900 text-white rounded-lg hover:from-indigo-800 hover:to-purple-800 transition-all text-sm" data-effect="BG_SPACE">
-                                    🌌 Space <span class="block text-xs opacity-75">Starry night</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-red-400 via-yellow-400 to-pink-400 text-white rounded-lg hover:from-red-500 hover:via-yellow-500 hover:to-pink-500 transition-all text-sm" data-effect="BG_RAINBOW">
-                                    🌈 Rainbow <span class="block text-xs opacity-75">Colorful gradient</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-gray-300 my-3 pt-3">
-                            <h4 class="text-sm font-bold text-gray-700 mb-2 text-center">📐 Background Patterns</h4>
-                            <div class="space-y-2">
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-gray-600 to-gray-800 text-white rounded-lg hover:from-gray-700 hover:to-gray-900 transition-all text-sm" data-effect="BG_DOTS">
-                                    ⚪ Polka Dots <span class="block text-xs opacity-75">Dotted pattern</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-slate-500 to-slate-700 text-white rounded-lg hover:from-slate-600 hover:to-slate-800 transition-all text-sm" data-effect="BG_STRIPES">
-                                    📏 Stripes <span class="block text-xs opacity-75">Diagonal lines</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-lg hover:from-teal-600 hover:to-cyan-700 transition-all text-sm" data-effect="BG_WAVES">
-                                    〰️ Wave Pattern <span class="block text-xs opacity-75">Flowing waves</span>
-                                </button>
-                                <button class="customize-effect-btn w-full py-2 px-3 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounded-lg hover:from-gray-500 hover:to-gray-700 transition-all text-sm" data-effect="BG_RESET">
-                                    🔄 Reset Background <span class="block text-xs opacity-75">Back to default</span>
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
-                    <div class="mt-3 text-center text-xs text-gray-500 border-t border-gray-200 pt-2">
-                        🎨 Click effects to toggle • Mix and match!
+                    <div class="border-t border-yellow-300 my-3 pt-3">
+                        <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold" data-effect="ACHIEVEMENTS">
+                            <div>
+                                <div class="font-medium">🏆 Achievements</div>
+                                <div class="text-xs opacity-75">View your progress</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="border-t border-red-300 my-3 pt-3">
+                        <button class="mobile-touch-btn customize-effect-btn bg-gradient-to-r from-red-600 to-red-800 text-white font-bold" data-effect="REMOVE_ALL_CUSTOMIZE">
+                            <div>
+                                <div class="font-medium">🧹 Remove All Effects</div>
+                                <div class="text-xs opacity-75">Clear all customizations</div>
+                            </div>
+                        </button>
                     </div>
                 </div>
-                <div class="p-3 border-t border-gray-200 bg-gray-50 rounded-b-xl flex-shrink-0">
-                    <div class="text-xs text-gray-500 text-center">
-                        ✨ Customize your experience!
-                    </div>
+
+                <div class="mt-4 text-xs text-gray-500 text-center border-t border-gray-200 pt-3">
+                    🎨 Click effects to toggle • Mix and match!
                 </div>
             `;
 
-            document.body.appendChild(menuPanel);
+            // Set footer content
+            menuFooter.textContent = '✨ Customize your experience!';
 
-            // Animate in
-            setTimeout(() => {
-                menuPanel.classList.remove('-translate-x-full');
-            }, 10);
-
-            // Set up event listeners for the menu
-            menuPanel.querySelector('#close-customize-menu').addEventListener('click', () => {
-                closeCustomizeMenu();
-            });
-
-            // Close when clicking outside the menu (with delay to prevent immediate closing)
-            setTimeout(() => {
-                document.addEventListener('click', handleCustomizeMenuOutsideClick);
-            }, 100);
-
-            function handleCustomizeMenuOutsideClick(e) {
-                if (!menuPanel.contains(e.target)) {
-                    closeCustomizeMenu();
-                    document.removeEventListener('click', handleCustomizeMenuOutsideClick);
-                }
-            }
+            // Show the menu using the mobile-responsive system
+            showMobileMenu(menuPanel);
 
             // Set up effect buttons
             const effectButtons = menuPanel.querySelectorAll('.customize-effect-btn');
@@ -3667,19 +3734,12 @@
             });
         }
 
-        // Close the customize menu
+        // Close the customize menu (legacy function for compatibility)
         function closeCustomizeMenu() {
             const menuPanel = document.getElementById('customize-menu-panel');
-            if (!menuPanel) return;
-
-            // Animate out
-            menuPanel.classList.add('-translate-x-full');
-
-            setTimeout(() => {
-                if (menuPanel.parentNode) {
-                    document.body.removeChild(menuPanel);
-                }
-            }, 300);
+            if (menuPanel) {
+                closeMobileMenu(menuPanel);
+            }
         }
 
         // Show customize notification
@@ -5778,15 +5838,16 @@
         }
 
         function openAchievementsMenu() {
-            const menuPanel = document.createElement('div');
-            menuPanel.id = 'achievements-menu-panel';
-            menuPanel.className = 'fixed top-4 right-4 bg-white rounded-lg shadow-lg border z-50 transform translate-x-full transition-transform duration-200 ease-out';
-            menuPanel.style.width = '320px';
-            menuPanel.style.maxHeight = '80vh';
-
             const unlockedCount = Object.values(achievements).filter(a => a.unlocked).length;
             const totalCount = Object.keys(achievements).length;
             const completionPercent = Math.round((unlockedCount / totalCount) * 100);
+
+            // Create the mobile-responsive achievements menu
+            const { menuPanel, menuContent } = createMobileMenu('achievements-menu-panel', '🏆 Achievements', 'right');
+
+            // Get the menu body to add content
+            const menuBody = menuContent.querySelector('.mobile-menu-body');
+            const menuFooter = menuContent.querySelector('.mobile-menu-footer div');
 
             // Simple category grouping
             const categories = {
@@ -5804,32 +5865,63 @@
 
             let currentCategory = 'long-term';
 
+            // Create mobile-friendly achievements content
+            menuBody.innerHTML = `
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-gray-700">Progress Overview</h4>
+                        <span class="text-xs text-gray-500">${unlockedCount}/${totalCount} (${completionPercent}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded h-2">
+                        <div class="bg-yellow-500 h-2 rounded transition-all duration-300" style="width: ${completionPercent}%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-sm font-bold text-gray-700 mb-2">Categories</h4>
+                    <div class="flex border border-gray-200 rounded-lg overflow-hidden">
+                        ${Object.keys(categories).map(key => `
+                            <button class="flex-1 py-2 px-2 text-xs font-medium category-tab ${key === currentCategory ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}" data-category="${key}">
+                                <div class="text-center">
+                                    <div>${categories[key].icon}</div>
+                                    <div class="text-xs">${categories[key].name}</div>
+                                </div>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div id="category-content">
+                    <!-- Content will be populated by renderCategory -->
+                </div>
+            `;
+
             function renderCategory(categoryKey) {
                 const category = categories[categoryKey];
                 const categoryUnlocked = category.achievements.filter(a => a.unlocked).length;
                 const categoryPercent = category.achievements.length > 0 ? Math.round((categoryUnlocked / category.achievements.length) * 100) : 0;
 
                 return `
-                    <div class="p-3">
-                        <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
                             <h4 class="font-bold text-sm">${category.icon} ${category.name}</h4>
-                            <span class="text-xs text-gray-500">${categoryUnlocked}/${category.achievements.length} (${categoryPercent}%)</span>
+                            <span class="text-xs text-gray-500">${categoryUnlocked}/${category.achievements.length}</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded h-1 mb-3">
-                            <div class="bg-blue-500 h-1 rounded" style="width: ${categoryPercent}%"></div>
+                            <div class="bg-blue-500 h-1 rounded transition-all duration-300" style="width: ${categoryPercent}%"></div>
                         </div>
-                        <div class="space-y-2 max-h-60 overflow-y-auto">
+                        <div class="space-y-2">
                             ${category.achievements.map(achievement => {
                                 const progress = getAchievementProgress(achievement);
                                 return `
-                                    <div class="flex items-center space-x-2 p-2 rounded border ${achievement.unlocked ? 'bg-green-50 border-green-200' : 'bg-gray-50'}">
-                                        <div class="text-lg ${achievement.unlocked ? '' : 'grayscale'}">${achievement.icon}</div>
+                                    <div class="flex items-center space-x-3 p-3 rounded-lg border ${achievement.unlocked ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}">
+                                        <div class="text-lg ${achievement.unlocked ? '' : 'grayscale opacity-50'}">${achievement.icon}</div>
                                         <div class="flex-1 min-w-0">
-                                            <div class="font-medium text-xs ${achievement.unlocked ? 'text-green-700' : 'text-gray-600'}">${achievement.name}</div>
-                                            <div class="text-xs text-gray-500 truncate">${achievement.description}</div>
+                                            <div class="font-medium text-sm ${achievement.unlocked ? 'text-green-700' : 'text-gray-700'}">${achievement.name}</div>
+                                            <div class="text-xs text-gray-500 mt-1">${achievement.description}</div>
                                             ${achievement.unlocked ?
-                                                '<div class="text-xs text-green-600">✓ Unlocked</div>' :
-                                                `<div class="text-xs text-gray-400">${progress.current}/${progress.required} (${progress.percent}%)</div>`
+                                                '<div class="text-xs text-green-600 font-medium mt-1">✓ Unlocked</div>' :
+                                                `<div class="text-xs text-gray-400 mt-1">${progress.current}/${progress.required} (${progress.percent}%)</div>`
                                             }
                                         </div>
                                     </div>
@@ -5840,68 +5932,31 @@
                 `;
             }
 
-            menuPanel.innerHTML = `
-                <div class="p-3 border-b bg-yellow-50">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="font-bold text-yellow-700">🏆 Achievements</h3>
-                            <div class="text-xs text-gray-600">${unlockedCount}/${totalCount} (${completionPercent}%)</div>
-                        </div>
-                        <button id="close-achievements-menu" class="text-gray-500 hover:text-gray-700">✕</button>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded h-2 mt-2">
-                        <div class="bg-yellow-500 h-2 rounded" style="width: ${completionPercent}%"></div>
-                    </div>
-                </div>
+            // Set initial content
+            menuContent.querySelector('#category-content').innerHTML = renderCategory(currentCategory);
 
-                <div class="flex border-b">
-                    ${Object.keys(categories).map(key => `
-                        <button class="flex-1 py-2 px-3 text-xs font-medium category-tab ${key === currentCategory ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:text-gray-700'}" data-category="${key}">
-                            ${categories[key].icon} ${categories[key].name}
-                        </button>
-                    `).join('')}
-                </div>
+            // Set footer content
+            menuFooter.innerHTML = `Games: ${gamesPlayed} | Best: ${bestScore} | Words: ${totalWordsFound}`;
 
-                <div id="category-content">
-                    ${renderCategory(currentCategory)}
-                </div>
+            // Show the menu using the mobile-responsive system
+            showMobileMenu(menuPanel);
 
-                <div class="p-2 border-t bg-gray-50 text-xs text-gray-500 text-center">
-                    Games: ${gamesPlayed} | Best: ${bestScore} | Words: ${totalWordsFound}
-                </div>
-            `;
-
-            document.body.appendChild(menuPanel);
-
-            // Add event listeners
+            // Add event listeners for category tabs
             menuPanel.querySelectorAll('.category-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const category = tab.dataset.category;
+                    currentCategory = category;
 
                     // Update active tab
                     menuPanel.querySelectorAll('.category-tab').forEach(t => {
-                        t.className = 'flex-1 py-2 px-3 text-xs font-medium category-tab text-gray-500 hover:text-gray-700';
+                        t.className = 'flex-1 py-2 px-2 text-xs font-medium category-tab text-gray-500 hover:text-gray-700 hover:bg-gray-50';
                     });
-                    tab.className = 'flex-1 py-2 px-3 text-xs font-medium category-tab bg-blue-100 text-blue-700';
+                    tab.className = 'flex-1 py-2 px-2 text-xs font-medium category-tab bg-blue-100 text-blue-700';
 
                     // Update content
                     menuPanel.querySelector('#category-content').innerHTML = renderCategory(category);
                 });
             });
-
-            menuPanel.querySelector('#close-achievements-menu').addEventListener('click', () => {
-                menuPanel.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (menuPanel.parentNode) {
-                        menuPanel.remove();
-                    }
-                }, 200);
-            });
-
-            // Animate in
-            setTimeout(() => {
-                menuPanel.classList.remove('translate-x-full');
-            }, 10);
         }
 
 
